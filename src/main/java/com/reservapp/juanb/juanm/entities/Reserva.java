@@ -21,11 +21,11 @@ public class Reserva {
     public Reserva() {
     }
 
-    public Reserva(UUID idReserva, Estado estado, com.reservapp.juanb.juanm.entities.Usuario usuario, Mesa mesa,
+    public Reserva(UUID idReserva, Estado estado, Usuario usuario, Mesa mesa,
             Pago pago, Date fecha, Time hora, int numeroPersonas) {
         this.idReserva = idReserva;
         this.estado = estado;
-        Usuario = usuario;
+        this.usuario = usuario;
         this.mesa = mesa;
         this.pago = pago;
         this.fecha = fecha;
@@ -54,7 +54,7 @@ public class Reserva {
     }
 
     public void setUsuario(Usuario usuario) {
-        Usuario = usuario;
+        this.usuario = usuario;
     }
 
     public Mesa getMesa() {
@@ -95,7 +95,5 @@ public class Reserva {
 
     public void setNumeroPersonas(int numeroPersonas) {
         this.numeroPersonas = numeroPersonas;
-    }
-
-    
+    }    
 }

@@ -5,9 +5,9 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.reservapp.juanb.juanm.entities.Reserva;
+import com.reservapp.juanb.juanm.entities.Estado;
 
 @Repository
-public interface ReservaRepositorio extends JpaRepository<Reserva, UUID>{
+public interface EstadoRepositorio extends JpaRepository<Estado, UUID>{
 
 }

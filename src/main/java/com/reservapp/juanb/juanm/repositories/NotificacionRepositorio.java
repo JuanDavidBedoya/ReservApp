@@ -5,9 +5,9 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.reservapp.juanb.juanm.entities.Reserva;
+import com.reservapp.juanb.juanm.entities.Notificacion;
 
 @Repository
-public interface ReservaRepositorio extends JpaRepository<Reserva, UUID>{
+public interface NotificacionRepositorio extends JpaRepository<Notificacion, UUID>{
 
 }
