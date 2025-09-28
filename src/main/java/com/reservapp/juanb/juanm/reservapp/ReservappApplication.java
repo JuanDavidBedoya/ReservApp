@@ -12,4 +12,8 @@ public class ReservappApplication {
 
 	//Prueba de commit para ver si funciona GitHub Desktop
 
+	public static void prueba() {
+		System.out.println("Hola");
+	}
+
 }
