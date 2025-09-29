@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "reservapp": {
+    "TailApp": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -61,10 +61,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "reservapp:build:production"
+              "buildTarget": "TailApp:build:production"
             },
             "development": {
-              "buildTarget": "reservapp:build:development"
+              "buildTarget": "TailApp:build:development"
             }
           },
           "defaultConfiguration": "development"
