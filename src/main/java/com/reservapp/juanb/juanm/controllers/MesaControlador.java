@@ -15,45 +15,45 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.reservapp.juanb.juanm.entities.Tipo;
-import com.reservapp.juanb.juanm.services.TipoServicio;
+import com.reservapp.juanb.juanm.entities.Mesa;
+import com.reservapp.juanb.juanm.services.MesaServicio;
 
 @RestController
-@RequestMapping("/tipos")
-public class TipoControlador {
+@RequestMapping("/mesas")
+public class MesaControlador {
 
-    private TipoServicio tipoServicio;
+    private MesaServicio mesaServicio;
 
-    public TipoControlador(TipoServicio tipoServicio) {
-        this.tipoServicio = tipoServicio;
+    public MesaControlador(MesaServicio mesaServicio) {
+        this.mesaServicio = mesaServicio;
     }
 
     @GetMapping
-    public ResponseEntity<List<Tipo>> getAll(){
-        List<Tipo> list = tipoServicio.findAll();
+    public ResponseEntity<List<Mesa>> getAll(){
+        List<Mesa> list = mesaServicio.findAll();
         return ResponseEntity.ok(list);
     }
 
     @GetMapping("/{uuid}")
-    public Optional<Tipo> getById(@PathVariable("uuid") UUID uuid){
-        return tipoServicio.findById(uuid);
+    public Optional<Mesa> getById(@PathVariable("uuid") UUID uuid){
+        return mesaServicio.findById(uuid);
     }
     
     @PostMapping
-    public ResponseEntity<Tipo> save(@RequestBody Tipo tipo) {
-        Tipo nuevoTipo = tipoServicio.save(tipo);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoTipo);
+    public ResponseEntity<Mesa> save(@RequestBody Mesa mesa) {
+        Mesa nuevaMesa = mesaServicio.save(mesa);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevaMesa);
     }
 
     @PutMapping("/{uuid}")
-    public ResponseEntity<Tipo> update(@PathVariable("uuid") UUID uuid, @RequestBody Tipo tipo) {
-        Tipo actualizarTipo = tipoServicio.update(uuid, tipo);
-        return ResponseEntity.ok(actualizarTipo);
+    public ResponseEntity<Mesa> update(@PathVariable("uuid") UUID uuid, @RequestBody Mesa mesa) {
+        Mesa actualizarMesa = mesaServicio.update(uuid, mesa);
+        return ResponseEntity.ok(actualizarMesa);
     }
 
     @DeleteMapping("/{uuid}")
     public ResponseEntity<Void> delete(@PathVariable("uuid") UUID uuid) {
-        tipoServicio.delete(uuid);
+        mesaServicio.delete(uuid);
         return ResponseEntity.noContent().build();
     }   
 }

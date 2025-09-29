@@ -11,7 +11,7 @@ public class Reserva {
 
     private UUID idReserva;
     private Estado estado;
-    private Usuario Usuario;
+    private Usuario usuario;
     private Mesa mesa;
     private Pago pago;
     private Date fecha;
@@ -50,7 +50,7 @@ public class Reserva {
     }
 
     public Usuario getUsuario() {
-        return Usuario;
+        return usuario;
     }
 
     public void setUsuario(Usuario usuario) {
