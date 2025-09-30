@@ -3,20 +3,34 @@ package com.reservapp.juanb.juanm.entities;
 import java.sql.Date;
 import java.util.UUID;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
 @Entity
 @Table(name = "comentarios")
 public class Comentario {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id_comentario")
     private UUID idComentario;
+
+    @Column(name = "puntuacion")
     private int puntuacion;
+
+    @Column(name = "mensaje")
     private String mensaje;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "fecha_comentario")
     private Date fechaComentario;
 
     @ManyToOne

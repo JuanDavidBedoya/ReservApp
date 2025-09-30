@@ -4,8 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -14,10 +18,15 @@ import jakarta.persistence.Table;
 public class Tipo {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id_tipo")
     private UUID idTipo;
+
+    @Column(name = "nombre")
     private String nombre;
 
     @OneToMany(mappedBy = "tipo")
+    @JoinColumn(name = "id_notificacion", referencedColumnName = "id_Notificacion")
     private List<Notificacion> notificaciones = new ArrayList<>();
 
     public Tipo() {

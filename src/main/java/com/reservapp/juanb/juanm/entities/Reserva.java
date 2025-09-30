@@ -6,22 +6,37 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
 @Entity
 @Table(name = "reservas")
 public class Reserva {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id_reserva")
     private UUID idReserva;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "fecha")
     private Date fecha;
+
+    @Temporal(TemporalType.TIME)
+    @Column(name = "hora")
     private Time hora;
+
+    @Column(name = "numero_personas")
     private int numeroPersonas;
 
     @ManyToOne
@@ -37,13 +52,15 @@ public class Reserva {
     private Estado estado;
 
     @OneToMany(mappedBy = "comentarios")
+    @JoinColumn(name = "comentarios", referencedColumnName = "id_comentario")
     private List<Comentario> comentarios = new ArrayList<>();
 
     @OneToMany(mappedBy = "comentarios")
+    @JoinColumn(name = "notificaciones", referencedColumnName = "id_notificacion")
     private List<Notificacion> notificaciones = new ArrayList<>();
 
     @OneToOne
-    @JoinColumn(name = "id_pago")
+    @JoinColumn(name = "id_pago", referencedColumnName = "id_pago")
     private Pago pago;
 
     public Reserva() {

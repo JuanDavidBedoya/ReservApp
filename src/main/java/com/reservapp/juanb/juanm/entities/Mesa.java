@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -16,11 +19,18 @@ import jakarta.persistence.Table;
 public class Mesa {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id_mesa")
     private UUID idMesa;
+    
+    @Column(name = "numero_mesa")
     private int numeroMesa;
+
+    @Column(name = "capacidad")
     private int capacidad;
 
     @OneToMany(mappedBy = "mesa")
+    @JoinColumn(name = "reservas", referencedColumnName = "id_reserva")
     private List<Reserva> reservas = new ArrayList<>();
 
     @ManyToOne

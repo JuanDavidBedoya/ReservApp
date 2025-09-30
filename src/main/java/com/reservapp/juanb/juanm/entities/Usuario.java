@@ -3,6 +3,7 @@ package com.reservapp.juanb.juanm.entities;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -15,16 +16,27 @@ import jakarta.persistence.Table;
 public class Usuario {
 
     @Id
+    @Column(name = "cedula")
     private String cedula;
-    private String nombre;  
+
+    @Column(name = "nombre")
+    private String nombre;
+
+    @Column(name = "correo")
     private String correo;
+
+    @Column(name = "contrasena")
     private String contrasena;
+
+    @Column(name = "telefono")
     private String telefono;
 
     @OneToMany(mappedBy = "usuario")
+    @JoinColumn(name = "comentarios", referencedColumnName = "id_comentario")
     private List<Comentario> comentarios = new ArrayList<>();
 
     @OneToMany(mappedBy = "reserva")
+    @JoinColumn(name = "reservas", referencedColumnName = "id_reserva")
     private List<Reserva> reservas = new ArrayList<>();
 
     @ManyToOne
