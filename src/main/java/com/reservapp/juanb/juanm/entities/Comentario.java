@@ -4,28 +4,40 @@ import java.sql.Date;
 import java.util.UUID;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "comentarios")
 public class Comentario {
 
+    @Id
     private UUID idComentario;
-    private Usuario usuario;
-    private Reserva reserva;
     private int puntuacion;
     private String mensaje;
     private Date fechaComentario;
 
+    @ManyToOne
+    @JoinColumn(name = "cedula_usuario")
+    private Usuario usuario;
+
+    @ManyToOne
+    @JoinColumn(name = "id_reserva")
+    private Reserva reserva;
+
     public Comentario() {
     }
 
-    public Comentario(UUID idComentario, Usuario usuario, Reserva reserva, int puntuacion, String mensaje,
-            Date fechaComentario) {
+    public Comentario(UUID idComentario, int puntuacion, String mensaje, Date fechaComentario, Usuario usuario,
+            Reserva reserva) {
         this.idComentario = idComentario;
-        this.usuario = usuario;
-        this.reserva = reserva;
         this.puntuacion = puntuacion;
         this.mensaje = mensaje;
         this.fechaComentario = fechaComentario;
+        this.usuario = usuario;
+        this.reserva = reserva;
     }
 
     public UUID getIdComentario() {
@@ -34,22 +46,6 @@ public class Comentario {
 
     public void setIdComentario(UUID idComentario) {
         this.idComentario = idComentario;
-    }
-
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
-
-    public Reserva getReserva() {
-        return reserva;
-    }
-
-    public void setReserva(Reserva reserva) {
-        this.reserva = reserva;
     }
 
     public int getPuntuacion() {
@@ -74,5 +70,21 @@ public class Comentario {
 
     public void setFechaComentario(Date fechaComentario) {
         this.fechaComentario = fechaComentario;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public Reserva getReserva() {
+        return reserva;
+    }
+
+    public void setReserva(Reserva reserva) {
+        this.reserva = reserva;
     }
 }

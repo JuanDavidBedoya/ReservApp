@@ -1,21 +1,32 @@
 package com.reservapp.juanb.juanm.entities;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "roles")
 public class Rol {
 
+    @Id
     private UUID idRol;
     private String nombre;
+
+    @OneToMany(mappedBy = "rol")
+    private List<Usuario> usuarios = new ArrayList<>();
 
     public Rol() {
     }
 
-    public Rol(UUID idRol, String nombre) {
+    public Rol(UUID idRol, String nombre, List<Usuario> usuarios) {
         this.idRol = idRol;
         this.nombre = nombre;
+        this.usuarios = usuarios;
     }
 
     public UUID getIdRol() {
@@ -32,5 +43,13 @@ public class Rol {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public List<Usuario> getUsuarios() {
+        return usuarios;
+    }
+
+    public void setUsuarios(List<Usuario> usuarios) {
+        this.usuarios = usuarios;
     }
 }

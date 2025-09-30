@@ -2,35 +2,65 @@ package com.reservapp.juanb.juanm.entities;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "reservas")
 public class Reserva {
 
+    @Id
     private UUID idReserva;
-    private Estado estado;
-    private Usuario usuario;
-    private Mesa mesa;
-    private Pago pago;
     private Date fecha;
     private Time hora;
     private int numeroPersonas;
 
+    @ManyToOne
+    @JoinColumn(name = "cedula_usuario")
+    private Usuario usuario;
+
+    @ManyToOne
+    @JoinColumn(name = "id_mesa")
+    private Mesa mesa;
+
+    @ManyToOne
+    @JoinColumn(name = "id_estado")
+    private Estado estado;
+
+    @OneToMany(mappedBy = "comentarios")
+    private List<Comentario> comentarios = new ArrayList<>();
+
+    @OneToMany(mappedBy = "comentarios")
+    private List<Notificacion> notificaciones = new ArrayList<>();
+
+    @OneToOne
+    @JoinColumn(name = "id_pago")
+    private Pago pago;
+
     public Reserva() {
     }
 
-    public Reserva(UUID idReserva, Estado estado, Usuario usuario, Mesa mesa,
-            Pago pago, Date fecha, Time hora, int numeroPersonas) {
+    public Reserva(UUID idReserva, Date fecha, Time hora, int numeroPersonas, Usuario usuario, Mesa mesa,
+            Estado estado, List<Comentario> comentarios, List<Notificacion> notificaciones, Pago pago) {
         this.idReserva = idReserva;
-        this.estado = estado;
-        this.usuario = usuario;
-        this.mesa = mesa;
-        this.pago = pago;
         this.fecha = fecha;
         this.hora = hora;
         this.numeroPersonas = numeroPersonas;
+        this.usuario = usuario;
+        this.mesa = mesa;
+        this.estado = estado;
+        this.comentarios = comentarios;
+        this.notificaciones = notificaciones;
+        this.pago = pago;
     }
 
     public UUID getIdReserva() {
@@ -39,38 +69,6 @@ public class Reserva {
 
     public void setIdReserva(UUID idReserva) {
         this.idReserva = idReserva;
-    }
-
-    public Estado getEstado() {
-        return estado;
-    }
-
-    public void setEstado(Estado estado) {
-        this.estado = estado;
-    }
-
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
-
-    public Mesa getMesa() {
-        return mesa;
-    }
-
-    public void setMesa(Mesa mesa) {
-        this.mesa = mesa;
-    }
-
-    public Pago getPago() {
-        return pago;
-    }
-
-    public void setPago(Pago pago) {
-        this.pago = pago;
     }
 
     public Date getFecha() {
@@ -95,5 +93,53 @@ public class Reserva {
 
     public void setNumeroPersonas(int numeroPersonas) {
         this.numeroPersonas = numeroPersonas;
-    }    
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public Mesa getMesa() {
+        return mesa;
+    }
+
+    public void setMesa(Mesa mesa) {
+        this.mesa = mesa;
+    }
+
+    public Estado getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Estado estado) {
+        this.estado = estado;
+    }
+
+    public List<Comentario> getComentarios() {
+        return comentarios;
+    }
+
+    public void setComentario(List<Comentario> comentarios) {
+        this.comentarios = comentarios;
+    }
+
+    public List<Notificacion> getNotificaciones() {
+        return notificaciones;
+    }
+
+    public void setNotificacion(List<Notificacion> notificaciones) {
+        this.notificaciones = notificaciones;
+    }
+
+    public Pago getPago() {
+        return pago;
+    }
+
+    public void setPago(Pago pago) {
+        this.pago = pago;
+    }
 }

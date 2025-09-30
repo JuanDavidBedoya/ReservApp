@@ -10,10 +10,4 @@ public class ReservappApplication {
 		SpringApplication.run(ReservappApplication.class, args);
 	}
 
-	//Prueba de commit para ver si funciona GitHub Desktop
-
-	public static void prueba() {
-		System.out.println("Hola");
-	}
-
 }

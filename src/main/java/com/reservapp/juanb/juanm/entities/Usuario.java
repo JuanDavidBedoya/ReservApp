@@ -1,27 +1,46 @@
 package com.reservapp.juanb.juanm.entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "usuarios")
 public class Usuario {
 
+    @Id
     private String cedula;
-    private Rol rol;
     private String nombre;  
     private String correo;
     private String contrasena;
     private String telefono;
 
+    @OneToMany(mappedBy = "usuario")
+    private List<Comentario> comentarios = new ArrayList<>();
+
+    @OneToMany(mappedBy = "reserva")
+    private List<Reserva> reservas = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "id_rol")
+    private Rol rol;
+
     public Usuario() {
     }
 
-    public Usuario(String cedula, Rol rol, String nombre, String correo, String contrasena, String telefono) {
+    public Usuario(String cedula, String nombre, String correo, String contrasena, String telefono, Rol rol) {
         this.cedula = cedula;
-        this.rol = rol;
         this.nombre = nombre;
         this.correo = correo;
         this.contrasena = contrasena;
         this.telefono = telefono;
+        this.rol = rol;
     }
 
     public String getCedula() {
@@ -30,14 +49,6 @@ public class Usuario {
 
     public void setCedula(String cedula) {
         this.cedula = cedula;
-    }
-
-    public Rol getRol() {
-        return rol;
-    }
-
-    public void setRol(Rol rol) {
-        this.rol = rol;
     }
 
     public String getNombre() {
@@ -70,5 +81,29 @@ public class Usuario {
 
     public void setTelefono(String telefono) {
         this.telefono = telefono;
+    }
+
+    public List<Comentario> getComentarios() {
+        return comentarios;
+    }
+
+    public void setComentarios(List<Comentario> comentarios) {
+        this.comentarios = comentarios;
+    }
+
+    public List<Reserva> getReservas() {
+        return reservas;
+    }
+
+    public void setReservas(List<Reserva> reservas) {
+        this.reservas = reservas;
+    }
+
+    public Rol getRol() {
+        return rol;
+    }
+
+    public void setRol(Rol rol) {
+        this.rol = rol;
     }
 }
