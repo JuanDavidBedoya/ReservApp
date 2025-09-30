@@ -30,7 +30,6 @@ public class Mesa {
     private int capacidad;
 
     @OneToMany(mappedBy = "mesa")
-    @JoinColumn(name = "reservas", referencedColumnName = "id_reserva")
     private List<Reserva> reservas = new ArrayList<>();
 
     @ManyToOne

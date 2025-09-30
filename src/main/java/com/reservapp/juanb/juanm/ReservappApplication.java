@@ -1,4 +1,4 @@
-package com.reservapp.juanb.juanm.reservapp;
+package com.reservapp.juanb.juanm;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

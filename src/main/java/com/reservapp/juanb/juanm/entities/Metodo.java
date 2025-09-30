@@ -9,7 +9,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -26,7 +25,6 @@ public class Metodo {
     private String nombre;
 
     @OneToMany(mappedBy = "metodo")
-    @JoinColumn(name = "id_pago", referencedColumnName = "id_pago")
     private List<Pago> pagos = new ArrayList<>();
 
     public Metodo() {

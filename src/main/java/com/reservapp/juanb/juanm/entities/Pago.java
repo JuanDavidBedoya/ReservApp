@@ -35,7 +35,7 @@ public class Pago {
     private Metodo metodo;
 
     @ManyToOne
-    @JoinColumn(name = "id_metodo")
+    @JoinColumn(name = "id_estado")
     private Estado estado;
 
     public Pago() {

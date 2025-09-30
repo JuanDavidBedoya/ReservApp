@@ -51,16 +51,14 @@ public class Reserva {
     @JoinColumn(name = "id_estado")
     private Estado estado;
 
-    @OneToMany(mappedBy = "comentarios")
-    @JoinColumn(name = "comentarios", referencedColumnName = "id_comentario")
+    @OneToMany(mappedBy = "reserva")
     private List<Comentario> comentarios = new ArrayList<>();
 
-    @OneToMany(mappedBy = "comentarios")
-    @JoinColumn(name = "notificaciones", referencedColumnName = "id_notificacion")
+    @OneToMany(mappedBy = "reserva")
     private List<Notificacion> notificaciones = new ArrayList<>();
 
     @OneToOne
-    @JoinColumn(name = "id_pago", referencedColumnName = "id_pago")
+    @JoinColumn(name = "id_pago")
     private Pago pago;
 
     public Reserva() {

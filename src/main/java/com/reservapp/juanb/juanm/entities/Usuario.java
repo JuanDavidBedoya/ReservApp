@@ -32,11 +32,9 @@ public class Usuario {
     private String telefono;
 
     @OneToMany(mappedBy = "usuario")
-    @JoinColumn(name = "comentarios", referencedColumnName = "id_comentario")
     private List<Comentario> comentarios = new ArrayList<>();
 
-    @OneToMany(mappedBy = "reserva")
-    @JoinColumn(name = "reservas", referencedColumnName = "id_reserva")
+    @OneToMany(mappedBy = "usuario")
     private List<Reserva> reservas = new ArrayList<>();
 
     @ManyToOne

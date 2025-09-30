@@ -9,7 +9,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -26,19 +25,15 @@ public class Estado {
     private String nombre;
 
     @OneToMany(mappedBy = "estado")
-    @JoinColumn(name = "mesas", referencedColumnName = "id_mesa")
     private List<Mesa> mesas = new ArrayList<>();
 
     @OneToMany(mappedBy = "estado")
-    @JoinColumn(name = "reservas", referencedColumnName = "id_reserva")
     private List<Reserva> reservas = new ArrayList<>();
 
     @OneToMany(mappedBy = "estado")
-    @JoinColumn(name = "pagos", referencedColumnName = "id_pago")
     private List<Pago> pagos = new ArrayList<>();
 
     @OneToMany(mappedBy = "estado")
-    @JoinColumn(name = "notificaciones", referencedColumnName = "id_Notificacion")
     private List<Notificacion> notificaciones = new ArrayList<>();
 
     public Estado() {
