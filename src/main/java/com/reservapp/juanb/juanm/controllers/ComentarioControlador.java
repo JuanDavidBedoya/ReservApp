@@ -1,7 +1,6 @@
 package com.reservapp.juanb.juanm.controllers;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
@@ -16,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.reservapp.juanb.juanm.entities.Comentario;
+import com.reservapp.juanb.juanm.exceptions.BadRequestException;
+import com.reservapp.juanb.juanm.exceptions.ResourceNotFoundException;
 import com.reservapp.juanb.juanm.services.ComentarioServicio;
 
 @RestController
@@ -31,29 +32,62 @@ public class ComentarioControlador {
     @GetMapping
     public ResponseEntity<List<Comentario>> getAll(){
         List<Comentario> list = comentarioServicio.findAll();
-        return ResponseEntity.ok(list);
+        if(list.isEmpty()){
+            return ResponseEntity.noContent().build(); // 204 No Content
+        }
+        return ResponseEntity.ok(list); // 200 OK
     }
 
     @GetMapping("/{uuid}")
-    public Optional<Comentario> getById(@PathVariable("uuid") UUID uuid){
-        return comentarioServicio.findById(uuid);
+    public ResponseEntity<Comentario> getById(@PathVariable("uuid") UUID uuid){
+        Comentario comentario = comentarioServicio.findById(uuid)
+            .orElseThrow(() -> new ResourceNotFoundException("Comentario no encontrado con ID: " + uuid));
+        return ResponseEntity.ok(comentario); // 200 OK
     }
     
     @PostMapping
     public ResponseEntity<Comentario> save(@RequestBody Comentario comentario) {
-        Comentario nuevoComentario = comentarioServicio.save(comentario);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoComentario);
+        try {
+            // Validaciones básicas
+            if (comentario.getMensaje() == null || comentario.getMensaje().trim().isEmpty()) {
+                throw new BadRequestException("El mensaje del comentario no puede estar vacío");
+            }
+            if (comentario.getPuntuacion() < 1 || comentario.getPuntuacion() > 5) {
+                throw new BadRequestException("La puntuación debe estar entre 1 y 5");
+            }
+            
+            Comentario nuevoComentario = comentarioServicio.save(comentario);
+            return ResponseEntity.status(HttpStatus.CREATED).body(nuevoComentario); // 201 Created
+        } catch (Exception e) {
+            throw new BadRequestException("Error al crear el comentario: " + e.getMessage());
+        }
     }
 
     @PutMapping("/{uuid}")
     public ResponseEntity<Comentario> update(@PathVariable("uuid") UUID uuid, @RequestBody Comentario comentario) {
-        Comentario actualizarComentario = comentarioServicio.update(uuid, comentario);
-        return ResponseEntity.ok(actualizarComentario);
+        // Verificar que existe antes de actualizar
+        if (!comentarioServicio.findById(uuid).isPresent()) {
+            throw new ResourceNotFoundException("Comentario no encontrado con ID: " + uuid);
+        }
+        
+        // Validaciones
+        if (comentario.getMensaje() == null || comentario.getMensaje().trim().isEmpty()) {
+            throw new BadRequestException("El mensaje del comentario no puede estar vacío");
+        }
+        
+        comentario.setIdComentario(uuid);
+        Comentario actualizarComentario = comentarioServicio.save(comentario);
+        return ResponseEntity.ok(actualizarComentario); // 200 OK
     }
 
     @DeleteMapping("/{uuid}")
     public ResponseEntity<Void> delete(@PathVariable("uuid") UUID uuid) {
+        // Verificar que existe antes de eliminar
+        if (!comentarioServicio.findById(uuid).isPresent()) {
+            throw new ResourceNotFoundException("Comentario no encontrado con ID: " + uuid);
+        }
+        
         comentarioServicio.delete(uuid);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent().build(); // 204 No Content
     }   
 }
