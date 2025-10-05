@@ -14,7 +14,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -57,15 +56,12 @@ public class Reserva {
     @OneToMany(mappedBy = "reserva")
     private List<Notificacion> notificaciones = new ArrayList<>();
 
-    @OneToOne
-    @JoinColumn(name = "id_pago")
-    private Pago pago;
 
     public Reserva() {
     }
 
     public Reserva(UUID idReserva, Date fecha, Time hora, int numeroPersonas, Usuario usuario, Mesa mesa,
-            Estado estado, List<Comentario> comentarios, List<Notificacion> notificaciones, Pago pago) {
+            Estado estado, List<Comentario> comentarios, List<Notificacion> notificaciones) {
         this.idReserva = idReserva;
         this.fecha = fecha;
         this.hora = hora;
@@ -75,7 +71,6 @@ public class Reserva {
         this.estado = estado;
         this.comentarios = comentarios;
         this.notificaciones = notificaciones;
-        this.pago = pago;
     }
 
     public UUID getIdReserva() {
@@ -138,7 +133,7 @@ public class Reserva {
         return comentarios;
     }
 
-    public void setComentario(List<Comentario> comentarios) {
+    public void setComentarios(List<Comentario> comentarios) {
         this.comentarios = comentarios;
     }
 
@@ -146,15 +141,7 @@ public class Reserva {
         return notificaciones;
     }
 
-    public void setNotificacion(List<Notificacion> notificaciones) {
+    public void setNotificaciones(List<Notificacion> notificaciones) {
         this.notificaciones = notificaciones;
-    }
-
-    public Pago getPago() {
-        return pago;
-    }
-
-    public void setPago(Pago pago) {
-        this.pago = pago;
     }
 }

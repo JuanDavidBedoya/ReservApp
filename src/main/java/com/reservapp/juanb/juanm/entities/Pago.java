@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -38,15 +39,21 @@ public class Pago {
     @JoinColumn(name = "id_estado")
     private Estado estado;
 
+    // AGREGAR relación con Reserva 
+    @OneToOne
+    @JoinColumn(name = "id_reserva")
+    private Reserva reserva;
+
     public Pago() {
     }
 
-    public Pago(UUID idPago, double monto, Date fechaPago, Metodo metodo, Estado estado) {
+    public Pago(UUID idPago, double monto, Date fechaPago, Metodo metodo, Estado estado, Reserva reserva) {
         this.idPago = idPago;
         this.monto = monto;
         this.fechaPago = fechaPago;
         this.metodo = metodo;
         this.estado = estado;
+        this.reserva = reserva;
     }
 
     public UUID getIdPago() {
@@ -87,5 +94,13 @@ public class Pago {
 
     public void setEstado(Estado estado) {
         this.estado = estado;
+    }
+
+    public Reserva getReserva() {
+        return reserva;
+    }
+
+    public void setReserva(Reserva reserva) {
+        this.reserva = reserva;
     }
 }
