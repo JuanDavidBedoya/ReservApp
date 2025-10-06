@@ -1,7 +1,7 @@
 package com.reservapp.juanb.juanm.entities;
 
-import java.sql.Date;
-import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -29,11 +29,11 @@ public class Reserva {
 
     @Temporal(TemporalType.DATE)
     @Column(name = "fecha")
-    private Date fecha;
+    private LocalDate fecha;
 
     @Temporal(TemporalType.TIME)
     @Column(name = "hora")
-    private Time hora;
+    private LocalTime hora;
 
     @Column(name = "numero_personas")
     private int numeroPersonas;
@@ -60,7 +60,7 @@ public class Reserva {
     public Reserva() {
     }
 
-    public Reserva(UUID idReserva, Date fecha, Time hora, int numeroPersonas, Usuario usuario, Mesa mesa,
+    public Reserva(UUID idReserva, LocalDate fecha, LocalTime hora, int numeroPersonas, Usuario usuario, Mesa mesa,
             Estado estado, List<Comentario> comentarios, List<Notificacion> notificaciones) {
         this.idReserva = idReserva;
         this.fecha = fecha;
@@ -81,19 +81,19 @@ public class Reserva {
         this.idReserva = idReserva;
     }
 
-    public Date getFecha() {
+    public LocalDate getFecha() {
         return fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
     }
 
-    public Time getHora() {
+    public LocalTime getHora() {
         return hora;
     }
 
-    public void setHora(Time hora) {
+    public void setHora(LocalTime hora) {
         this.hora = hora;
     }
 

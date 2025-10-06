@@ -1,57 +1,101 @@
 package com.reservapp.juanb.juanm.services;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import com.reservapp.juanb.juanm.dto.ComentarioRequestDTO;
+import com.reservapp.juanb.juanm.dto.ComentarioResponseDTO;
 import com.reservapp.juanb.juanm.entities.Comentario;
+import com.reservapp.juanb.juanm.entities.Reserva;
+import com.reservapp.juanb.juanm.entities.Usuario;
 import com.reservapp.juanb.juanm.exceptions.BadRequestException;
 import com.reservapp.juanb.juanm.exceptions.ResourceNotFoundException;
+import com.reservapp.juanb.juanm.mapper.ComentarioMapper;
 import com.reservapp.juanb.juanm.repositories.ComentarioRepositorio;
+import com.reservapp.juanb.juanm.repositories.ReservaRepositorio;
+import com.reservapp.juanb.juanm.repositories.UsuarioRepositorio;
 
 @Service
 public class ComentarioServicio {
 
     private ComentarioRepositorio comentarioRepositorio;
+    private UsuarioRepositorio usuarioRepositorio;
+    private ReservaRepositorio reservaRepositorio;
+    private ComentarioMapper comentarioMapper;
 
-    public ComentarioServicio(ComentarioRepositorio comentarioRepositorio) {
+    public ComentarioServicio(ComentarioRepositorio comentarioRepositorio, UsuarioRepositorio usuarioRepositorio, ReservaRepositorio reservaRepositorio, ComentarioMapper comentarioMapper) {
         this.comentarioRepositorio = comentarioRepositorio;
+        this.usuarioRepositorio = usuarioRepositorio;
+        this.reservaRepositorio = reservaRepositorio;
+        this.comentarioMapper = comentarioMapper;
     }
 
-    public List<Comentario> findAll() {
-        return comentarioRepositorio.findAll();
+    public List<ComentarioResponseDTO> findAll() {
+        return comentarioRepositorio.findAll()
+                .stream()
+                .map(comentarioMapper::toResponseDTO)
+                .collect(Collectors.toList());
     }
 
-    public Optional<Comentario> findById(UUID uuid) {
-        return comentarioRepositorio.findById(uuid);
+    public ComentarioResponseDTO findById(UUID uuid) {
+        Comentario comentario = comentarioRepositorio.findById(uuid)
+                .orElseThrow(() -> new ResourceNotFoundException("Comentario no encontrado con ID: " + uuid));
+        return comentarioMapper.toResponseDTO(comentario);
     }
 
-    public Comentario save(Comentario comentario) {
+    public ComentarioResponseDTO save(ComentarioRequestDTO dto) {
+        Usuario usuario = usuarioRepositorio.findById(dto.idUsuario())
+                .orElseThrow(() -> new BadRequestException("Usuario no encontrado con cédula: " + dto.idUsuario()));
+        Reserva reserva = reservaRepositorio.findById(dto.idReserva())
+                .orElseThrow(() -> new BadRequestException("Reserva no encontrada con ID: " + dto.idReserva()));
+
+        if (dto.puntuacion() < 1 || dto.puntuacion() > 5) {
+            throw new BadRequestException("La puntuación debe estar entre 1 y 5");
+        }
+
+        Comentario comentario = comentarioMapper.fromRequestDTO(dto, usuario, reserva);
+
         try {
-            return comentarioRepositorio.save(comentario);
+            Comentario saved = comentarioRepositorio.save(comentario);
+            return comentarioMapper.toResponseDTO(saved);
         } catch (DataAccessException e) {
             throw new BadRequestException("Error al guardar el comentario: " + e.getMessage());
         }
     }
 
+    public ComentarioResponseDTO update(UUID uuid, ComentarioRequestDTO dto) {
+        if (!comentarioRepositorio.existsById(uuid)) {
+            throw new ResourceNotFoundException("Comentario no encontrado con ID: " + uuid);
+        }
+
+        Usuario usuario = usuarioRepositorio.findById(dto.idUsuario())
+                .orElseThrow(() -> new BadRequestException("Usuario no encontrado con cédula: " + dto.idUsuario()));
+        Reserva reserva = reservaRepositorio.findById(dto.idReserva())
+                .orElseThrow(() -> new BadRequestException("Reserva no encontrada con ID: " + dto.idReserva()));
+
+        Comentario comentario = comentarioMapper.fromRequestDTO(dto, usuario, reserva);
+        comentario.setIdComentario(uuid);
+
+        try {
+            Comentario updated = comentarioRepositorio.save(comentario);
+            return comentarioMapper.toResponseDTO(updated);
+        } catch (DataAccessException e) {
+            throw new BadRequestException("Error al actualizar el comentario: " + e.getMessage());
+        }
+    }
+
     public void delete(UUID uuid) {
+        if (!comentarioRepositorio.existsById(uuid)) {
+            throw new ResourceNotFoundException("Comentario no encontrado con ID: " + uuid);
+        }
         try {
             comentarioRepositorio.deleteById(uuid);
         } catch (DataAccessException e) {
             throw new BadRequestException("Error al eliminar el comentario: " + e.getMessage());
         }
-    }
-
-    public Comentario update(UUID uuid, Comentario comentario) {
-        // Verificar que existe
-        if (!comentarioRepositorio.existsById(uuid)) {
-            throw new ResourceNotFoundException("Comentario no encontrado con ID: " + uuid);
-        }
-        
-        comentario.setIdComentario(uuid);
-        return save(comentario);
     }
 }

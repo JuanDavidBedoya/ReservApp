@@ -13,12 +13,14 @@ import com.reservapp.juanb.juanm.entities.Usuario;
 @Repository
 public interface UsuarioRepositorio extends JpaRepository<Usuario, String>{
 
-     boolean existsByCorreo(String correo);
+    boolean existsByCorreo(String correo);
     
     // Verificar si existe otro usuario con el mismo correo (excluyendo el actual)
     @Query("SELECT COUNT(u) > 0 FROM Usuario u WHERE u.correo = :correo AND u.cedula != :cedula")
     boolean existsByCorreoAndCedulaNot(@Param("correo") String correo, @Param("cedula") String cedula);
 
     Optional<Rol> findByNombre(String nombre);
+
+    
 
 }

@@ -47,7 +47,7 @@ public class UsuarioServicio {
         Rol rolCliente = rolRepositorio.findByNombre("Cliente")
                 .orElseThrow(() -> new ResourceNotFoundException("El rol 'Cliente' no se encuentra en la base de datos."));
         
-         Usuario usuario = new Usuario(
+        Usuario usuario = new Usuario(
                 usuarioDTO.cedula(),
                 usuarioDTO.nombre(),
                 usuarioDTO.correo(),
@@ -66,26 +66,26 @@ public class UsuarioServicio {
 
     public UsuarioResponseDTO update(String cedula, UsuarioUpdateDTO usuarioDTO) {
   
-    Usuario usuarioExistente = usuarioRepositorio.findById(cedula)
+        Usuario usuarioExistente = usuarioRepositorio.findById(cedula)
             .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con cédula: " + cedula));
 
-    if (usuarioRepositorio.existsByCorreoAndCedulaNot(usuarioDTO.correo(), cedula)) {
-        throw new ResourceAlreadyExistsException("El correo " + usuarioDTO.correo() + " ya está en uso por otro usuario.");
-    }
+        if (usuarioRepositorio.existsByCorreoAndCedulaNot(usuarioDTO.correo(), cedula)) {
+            throw new ResourceAlreadyExistsException("El correo " + usuarioDTO.correo() + " ya está en uso por otro usuario.");
+        }
 
-    usuarioExistente.setNombre(usuarioDTO.nombre());
-    usuarioExistente.setCorreo(usuarioDTO.correo());
-    usuarioExistente.setTelefono(usuarioDTO.telefono());
+        usuarioExistente.setNombre(usuarioDTO.nombre());
+        usuarioExistente.setCorreo(usuarioDTO.correo());
+        usuarioExistente.setTelefono(usuarioDTO.telefono());
 
-    if (!usuarioExistente.getRol().getIdRol().equals(usuarioDTO.idRol())) {
-        Rol nuevoRol = rolRepositorio.findById(usuarioDTO.idRol())
+        if (!usuarioExistente.getRol().getIdRol().equals(usuarioDTO.idRol())) {
+            Rol nuevoRol = rolRepositorio.findById(usuarioDTO.idRol())
                 .orElseThrow(() -> new ResourceNotFoundException("Rol no encontrado con ID: " + usuarioDTO.idRol()));
-        usuarioExistente.setRol(nuevoRol);
-    }
+            usuarioExistente.setRol(nuevoRol);
+        }
 
-    Usuario usuarioActualizado = usuarioRepositorio.save(usuarioExistente);
-    return usuarioMapper.toResponseDTO(usuarioActualizado);
-}
+        Usuario usuarioActualizado = usuarioRepositorio.save(usuarioExistente);
+        return usuarioMapper.toResponseDTO(usuarioActualizado);
+    }   
 
     public void delete(String cedula) {
         if (!usuarioRepositorio.existsById(cedula)) {

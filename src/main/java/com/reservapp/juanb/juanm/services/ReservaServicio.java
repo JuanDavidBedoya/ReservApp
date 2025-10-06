@@ -1,75 +1,160 @@
 package com.reservapp.juanb.juanm.services;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import com.reservapp.juanb.juanm.dto.ReservaRequestDTO;
+import com.reservapp.juanb.juanm.dto.ReservaResponseDTO;
+import com.reservapp.juanb.juanm.entities.Estado;
+import com.reservapp.juanb.juanm.entities.Mesa;
 import com.reservapp.juanb.juanm.entities.Reserva;
+import com.reservapp.juanb.juanm.entities.Usuario;
 import com.reservapp.juanb.juanm.exceptions.BadRequestException;
 import com.reservapp.juanb.juanm.exceptions.ResourceNotFoundException;
+import com.reservapp.juanb.juanm.mapper.ReservaMapper;
+import com.reservapp.juanb.juanm.repositories.EstadoRepositorio;
+import com.reservapp.juanb.juanm.repositories.MesaRepositorio;
 import com.reservapp.juanb.juanm.repositories.ReservaRepositorio;
+import com.reservapp.juanb.juanm.repositories.UsuarioRepositorio;
 
 @Service
 public class ReservaServicio {
 
-    private ReservaRepositorio reservaRepositorio;
+    private final ReservaRepositorio reservaRepositorio;
+    private final UsuarioRepositorio usuarioRepositorio;
+    private final MesaRepositorio mesaRepositorio;
+    private final EstadoRepositorio estadoRepositorio;
+    private final ReservaMapper reservaMapper;
 
-    public ReservaServicio(ReservaRepositorio reservaRepositorio) {
+    public ReservaServicio(
+            ReservaRepositorio reservaRepositorio,
+            UsuarioRepositorio usuarioRepositorio,
+            MesaRepositorio mesaRepositorio,
+            EstadoRepositorio estadoRepositorio,
+            ReservaMapper reservaMapper
+    ) {
         this.reservaRepositorio = reservaRepositorio;
+        this.usuarioRepositorio = usuarioRepositorio;
+        this.mesaRepositorio = mesaRepositorio;
+        this.estadoRepositorio = estadoRepositorio;
+        this.reservaMapper = reservaMapper;
     }
 
-    public List<Reserva> findAll() {
-        return reservaRepositorio.findAll();
+    //Obtener todas las reservas (GET)
+    public List<ReservaResponseDTO> findAll() {
+        return reservaRepositorio.findAll()
+                .stream()
+                .map(reservaMapper::toResponseDTO)
+                .collect(Collectors.toList());
     }
 
-    public Optional<Reserva> findById(UUID uuid) {
-        return reservaRepositorio.findById(uuid);
+    //Buscar por ID (GET /{id})
+    public ReservaResponseDTO findById(UUID uuid) {
+        Reserva reserva = reservaRepositorio.findById(uuid)
+                .orElseThrow(() -> new ResourceNotFoundException("Reserva no encontrada con ID: " + uuid));
+        return reservaMapper.toResponseDTO(reserva);
     }
 
-    public Reserva save(Reserva reserva) {
+    //Crear nueva reserva (POST)
+    public ReservaResponseDTO save(ReservaRequestDTO dto) {
         try {
-            return reservaRepositorio.save(reserva);
+            Usuario usuario = usuarioRepositorio.findById(dto.cedulaUsuario())
+                    .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+
+            Mesa mesa = mesaRepositorio.findById(dto.idMesa())
+                    .orElseThrow(() -> new ResourceNotFoundException("Mesa no encontrada"));
+
+            Estado estado = estadoRepositorio.findById(dto.idEstado())
+                    .orElseThrow(() -> new ResourceNotFoundException("Estado no encontrado"));
+
+            Reserva reserva = reservaMapper.fromRequestDTO(dto, usuario, mesa, estado);
+
+            // Validar capacidad
+            if (exceedsCapacity(reserva)) {
+                throw new BadRequestException("El número de personas excede la capacidad de la mesa");
+            }
+
+            if (!isMesaDisponible(mesa, reserva.getFecha(), reserva.getHora())) {
+            throw new BadRequestException("La mesa ya tiene una reserva en ese horario");
+            } 
+
+            Reserva guardada = reservaRepositorio.save(reserva);
+            return reservaMapper.toResponseDTO(guardada);
+
         } catch (DataAccessException e) {
             throw new BadRequestException("Error al guardar la reserva: " + e.getMessage());
         }
     }
 
+    //Actualizar reserva (PUT)
+    public ReservaResponseDTO update(UUID uuid, ReservaRequestDTO dto) {
+        if (!reservaRepositorio.existsById(uuid)) {
+            throw new ResourceNotFoundException("Reserva no encontrada con ID: " + uuid);
+        }
+
+        Usuario usuario = usuarioRepositorio.findById(dto.cedulaUsuario())
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+
+        Mesa mesa = mesaRepositorio.findById(dto.idMesa())
+                .orElseThrow(() -> new ResourceNotFoundException("Mesa no encontrada"));
+
+        Estado estado = estadoRepositorio.findById(dto.idEstado())
+                .orElseThrow(() -> new ResourceNotFoundException("Estado no encontrado"));
+
+        Reserva reserva = reservaMapper.fromRequestDTO(dto, usuario, mesa, estado);
+        reserva.setIdReserva(uuid); // mantener ID original
+
+        if (exceedsCapacity(reserva)) {
+            throw new BadRequestException("El número de personas excede la capacidad de la mesa");
+        }
+
+        Reserva actualizada = reservaRepositorio.save(reserva);
+        return reservaMapper.toResponseDTO(actualizada);
+    }
+
+    //Eliminar reserva (DELETE)
     public void delete(UUID uuid) {
         try {
+            if (!reservaRepositorio.existsById(uuid)) {
+                throw new ResourceNotFoundException("Reserva no encontrada con ID: " + uuid);
+            }
             reservaRepositorio.deleteById(uuid);
         } catch (DataAccessException e) {
             throw new BadRequestException("Error al eliminar la reserva: " + e.getMessage());
         }
     }
 
-    public Reserva update(UUID uuid, Reserva reserva) {
-        // Verificar que existe
-        if (!reservaRepositorio.existsById(uuid)) {
-            throw new ResourceNotFoundException("Reserva no encontrada con ID: " + uuid);
-        }
-        
-        reserva.setIdReserva(uuid);
-        return save(reserva);
+    //Validación de capacidad de personas en la mesa
+    public boolean exceedsCapacity(Reserva reserva) {
+        return reserva.getMesa() != null &&
+                reserva.getNumeroPersonas() > reserva.getMesa().getCapacidad();
     }
 
-    // Método para validar capacidad (RF20)
-    public boolean exceedsCapacity(Reserva reserva) {
-        // Implementación básica - debes adaptarla a tu lógica de negocio
-        // Por ejemplo: verificar si la mesa ya tiene reservas en esa fecha/hora
-        // que superen la capacidad máxima
-        
-        // Ejemplo simplificado:
-        if (reserva.getMesa() != null && reserva.getNumeroPersonas() > reserva.getMesa().getCapacidad()) {
-            return true;
+    //Validar si la mesa está libre ese día (RF20)
+    private boolean isMesaDisponible(Mesa mesa, LocalDate fecha, LocalTime horaInicioNueva) {
+        // Calcular hora de fin (2 horas después)
+        LocalTime inicio = horaInicioNueva;
+        LocalTime fin = inicio.plusHours(2);
+
+        // Buscar reservas existentes en esa fecha
+        List<Reserva> reservasExistentes = reservaRepositorio.findByMesaAndFecha(mesa, fecha);
+
+        for (Reserva r : reservasExistentes) {
+            LocalTime inicioExistente = r.getHora();
+            LocalTime finExistente = inicioExistente.plusHours(2);
+
+            // Verificar solapamiento: si los intervalos se cruzan
+            boolean solapan = inicio.isBefore(finExistente) && inicioExistente.isBefore(fin);
+            if (solapan) {
+                return false; // hay cruce, no disponible
+            }
         }
-        
-        // Aquí deberías implementar la lógica real para verificar el aforo del 100%
-        // Esto podría incluir contar todas las reservas para esa fecha/hora
-        // y verificar que no superen la capacidad total del restaurante
-        
-        return false; // Cambiar por tu implementación real
+        return true; // libre
     }
 }

@@ -3,10 +3,9 @@ package com.reservapp.juanb.juanm.controllers;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.reservapp.juanb.juanm.entities.Reserva;
+import com.reservapp.juanb.juanm.dto.ReservaRequestDTO;
+import com.reservapp.juanb.juanm.dto.ReservaResponseDTO;
 import com.reservapp.juanb.juanm.exceptions.BadRequestException;
-import com.reservapp.juanb.juanm.exceptions.CapacityExceededException;
-import com.reservapp.juanb.juanm.exceptions.ResourceNotFoundException;
 import com.reservapp.juanb.juanm.services.ReservaServicio;
 
 import java.util.List;
@@ -25,85 +24,78 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RequestMapping("/reservas")
 public class ReservaControlador {
 
-    private ReservaServicio reservaServicio;
+    private final ReservaServicio reservaServicio;
 
     public ReservaControlador(ReservaServicio reservaServicio) {
         this.reservaServicio = reservaServicio;
     }
 
+    //GET: obtener todas las reservas
     @GetMapping
-    public ResponseEntity<List<Reserva>> getAll(){
-        List<Reserva> list = reservaServicio.findAll();
+    public ResponseEntity<List<ReservaResponseDTO>> getAll() {
+        List<ReservaResponseDTO> list = reservaServicio.findAll();
         if (list.isEmpty()) {
             return ResponseEntity.noContent().build(); // 204
         }
         return ResponseEntity.ok(list); // 200
     }
-    
+
+    //GET: obtener una reserva por ID
     @GetMapping("/{uuid}")
-    public ResponseEntity<Reserva> getById(@PathVariable("uuid") UUID uuid){
-        Reserva reserva = reservaServicio.findById(uuid)
-            .orElseThrow(() -> new ResourceNotFoundException("Reserva no encontrada con ID: " + uuid));
+    public ResponseEntity<ReservaResponseDTO> getById(@PathVariable("uuid") UUID uuid) {
+        ReservaResponseDTO reserva = reservaServicio.findById(uuid);
         return ResponseEntity.ok(reserva); // 200
     }
 
+    //POST: crear nueva reserva
     @PostMapping
-    public ResponseEntity<Reserva> save(@RequestBody Reserva reserva) {
+    public ResponseEntity<ReservaResponseDTO> save(@RequestBody ReservaRequestDTO dto) {
+
         // Validaciones básicas adicionales
-        if (reserva.getFecha() == null) {
+        if (dto.fecha() == null) {
             throw new BadRequestException("La fecha de la reserva es requerida");
         }
-        if (reserva.getHora() == null) {
+        if (dto.hora() == null) {
             throw new BadRequestException("La hora de la reserva es requerida");
         }
-        if (reserva.getNumeroPersonas() <= 0) {
+        if (dto.numeroPersonas() <= 0) {
             throw new BadRequestException("El número de personas debe ser mayor a 0");
         }
-        if (reserva.getUsuario() == null) {
+        if (dto.cedulaUsuario() == null) {
             throw new BadRequestException("La reserva debe tener un usuario asociado");
         }
-        if (reserva.getMesa() == null) {
+        if (dto.idMesa() == null) {
             throw new BadRequestException("La reserva debe tener una mesa asociada");
         }
-        
-        // RF20: Validar aforo no supere 100%
-        if (reservaServicio.exceedsCapacity(reserva)) {
-            throw new CapacityExceededException("No se puede crear la reserva: el aforo supera el 100%");
+        if (dto.idEstado() == null) {
+            throw new BadRequestException("La reserva debe tener un estado asociado");
         }
         
-        Reserva nuevaReserva = reservaServicio.save(reserva);
+        ReservaResponseDTO nuevaReserva = reservaServicio.save(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevaReserva); // 201
     }
-    
+
+    //PUT: actualizar reserva existente
     @PutMapping("/{uuid}")
-    public ResponseEntity<Reserva> update(@PathVariable("uuid") UUID uuid, @RequestBody Reserva reserva) {
-        // Verificar que existe
-        if (!reservaServicio.findById(uuid).isPresent()) {
-            throw new ResourceNotFoundException("Reserva no encontrada con ID: " + uuid);
-        }
-        
-        // Validaciones básicas para actualización
-        if (reserva.getFecha() == null) {
+    public ResponseEntity<ReservaResponseDTO> update(@PathVariable("uuid") UUID uuid,
+                                                     @RequestBody ReservaRequestDTO dto) {
+        if (dto.fecha() == null) {
             throw new BadRequestException("La fecha de la reserva es requerida");
         }
-        if (reserva.getHora() == null) {
+        if (dto.hora() == null) {
             throw new BadRequestException("La hora de la reserva es requerida");
         }
-        if (reserva.getNumeroPersonas() <= 0) {
+        if (dto.numeroPersonas() <= 0) {
             throw new BadRequestException("El número de personas debe ser mayor a 0");
         }
-        
-        Reserva actualizarReserva = reservaServicio.update(uuid, reserva);
-        return ResponseEntity.ok(actualizarReserva); // 200
+
+        ReservaResponseDTO actualizada = reservaServicio.update(uuid, dto);
+        return ResponseEntity.ok(actualizada); // 200
     }
 
+    //DELETE: eliminar reserva
     @DeleteMapping("/{uuid}")
     public ResponseEntity<Void> delete(@PathVariable("uuid") UUID uuid) {
-        // Verificar que existe
-        if (!reservaServicio.findById(uuid).isPresent()) {
-            throw new ResourceNotFoundException("Reserva no encontrada con ID: " + uuid);
-        }
-        
         reservaServicio.delete(uuid);
         return ResponseEntity.noContent().build(); // 204
     }
