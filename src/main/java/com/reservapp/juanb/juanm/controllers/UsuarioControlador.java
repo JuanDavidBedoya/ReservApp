@@ -1,4 +1,3 @@
-// Ubicación: com/reservapp/juanb/juanm/controllers/UsuarioControlador.java
 package com.reservapp.juanb.juanm.controllers;
 
 import java.util.List;

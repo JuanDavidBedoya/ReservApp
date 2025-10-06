@@ -144,4 +144,4 @@ public class Reserva {
     public void setNotificaciones(List<Notificacion> notificaciones) {
         this.notificaciones = notificaciones;
     }
-}
+} 

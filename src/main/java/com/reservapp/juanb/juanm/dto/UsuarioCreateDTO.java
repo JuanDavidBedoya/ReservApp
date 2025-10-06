@@ -1,11 +1,7 @@
-// Ubicación: com/reservapp/juanb/juanm/dto/UsuarioCreateDTO.java
 package com.reservapp.juanb.juanm.dto;
-
-import java.util.UUID;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record UsuarioCreateDTO(
@@ -24,8 +20,5 @@ public record UsuarioCreateDTO(
     @Size(min = 8, message = "La contraseña debe tener al menos 8 caracteres")
     String contrasena,
     
-    String telefono,
-
-    @NotNull(message = "El ID del rol no puede ser nulo")
-    UUID idRol
+    String telefono
 ) {}

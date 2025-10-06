@@ -44,16 +44,16 @@ public class UsuarioServicio {
     }
 
     public UsuarioResponseDTO save(UsuarioCreateDTO usuarioDTO) {
-        Rol rol = rolRepositorio.findById(usuarioDTO.idRol())
-                .orElseThrow(() -> new ResourceNotFoundException("Rol no encontrado con ID: " + usuarioDTO.idRol()));
+        Rol rolCliente = rolRepositorio.findByNombre("Cliente")
+                .orElseThrow(() -> new ResourceNotFoundException("El rol 'Cliente' no se encuentra en la base de datos."));
         
-        Usuario usuario = new Usuario(
+         Usuario usuario = new Usuario(
                 usuarioDTO.cedula(),
                 usuarioDTO.nombre(),
                 usuarioDTO.correo(),
                 usuarioDTO.contrasena(), 
                 usuarioDTO.telefono(),
-                rol
+                rolCliente // Asignamos el rol por defecto
         );
 
         try {
