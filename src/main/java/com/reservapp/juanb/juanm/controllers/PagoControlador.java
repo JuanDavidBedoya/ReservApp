@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.reservapp.juanb.juanm.dto.PagoRequestDTO;
 import com.reservapp.juanb.juanm.dto.PagoResponseDTO;
 import com.reservapp.juanb.juanm.services.PagoServicio;
-
 import jakarta.validation.Valid;
 
 import java.util.List;
@@ -26,7 +25,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 public class PagoControlador {
 
     private final PagoServicio pagoServicio;
-
+    
     public PagoControlador(PagoServicio pagoServicio) {
         this.pagoServicio = pagoServicio;
     }

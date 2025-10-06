@@ -12,4 +12,5 @@ import com.reservapp.juanb.juanm.entities.Reserva;
 public interface PagoRepositorio extends JpaRepository<Pago, UUID>{
     
     boolean existsByReserva(Reserva reserva);
+    
 }

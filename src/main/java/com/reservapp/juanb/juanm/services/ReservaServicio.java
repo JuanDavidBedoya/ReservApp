@@ -137,7 +137,7 @@ public class ReservaServicio {
     }
 
     //Validar si la mesa está libre ese día (RF20)
-    private boolean isMesaDisponible(Mesa mesa, LocalDate fecha, LocalTime horaInicioNueva) {
+    public boolean isMesaDisponible(Mesa mesa, LocalDate fecha, LocalTime horaInicioNueva) {
         // Calcular hora de fin (2 horas después)
         LocalTime inicio = horaInicioNueva;
         LocalTime fin = inicio.plusHours(2);
