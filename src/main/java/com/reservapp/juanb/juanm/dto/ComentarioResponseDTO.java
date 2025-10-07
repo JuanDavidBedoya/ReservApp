@@ -8,6 +8,5 @@ public record ComentarioResponseDTO(
     int puntuacion,
     String mensaje,
     Date fechaComentario,
-    String nombreUsuario,
-    UUID idReserva
+    String nombreUsuario
 ) {}

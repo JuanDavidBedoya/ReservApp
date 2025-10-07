@@ -1,5 +1,6 @@
 package com.reservapp.juanb.juanm.services;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -10,13 +11,11 @@ import org.springframework.stereotype.Service;
 import com.reservapp.juanb.juanm.dto.ComentarioRequestDTO;
 import com.reservapp.juanb.juanm.dto.ComentarioResponseDTO;
 import com.reservapp.juanb.juanm.entities.Comentario;
-import com.reservapp.juanb.juanm.entities.Reserva;
 import com.reservapp.juanb.juanm.entities.Usuario;
 import com.reservapp.juanb.juanm.exceptions.BadRequestException;
 import com.reservapp.juanb.juanm.exceptions.ResourceNotFoundException;
 import com.reservapp.juanb.juanm.mapper.ComentarioMapper;
 import com.reservapp.juanb.juanm.repositories.ComentarioRepositorio;
-import com.reservapp.juanb.juanm.repositories.ReservaRepositorio;
 import com.reservapp.juanb.juanm.repositories.UsuarioRepositorio;
 
 @Service
@@ -24,13 +23,11 @@ public class ComentarioServicio {
 
     private ComentarioRepositorio comentarioRepositorio;
     private UsuarioRepositorio usuarioRepositorio;
-    private ReservaRepositorio reservaRepositorio;
     private ComentarioMapper comentarioMapper;
 
-    public ComentarioServicio(ComentarioRepositorio comentarioRepositorio, UsuarioRepositorio usuarioRepositorio, ReservaRepositorio reservaRepositorio, ComentarioMapper comentarioMapper) {
+    public ComentarioServicio(ComentarioRepositorio comentarioRepositorio, UsuarioRepositorio usuarioRepositorio, ComentarioMapper comentarioMapper) {
         this.comentarioRepositorio = comentarioRepositorio;
         this.usuarioRepositorio = usuarioRepositorio;
-        this.reservaRepositorio = reservaRepositorio;
         this.comentarioMapper = comentarioMapper;
     }
 
@@ -50,14 +47,13 @@ public class ComentarioServicio {
     public ComentarioResponseDTO save(ComentarioRequestDTO dto) {
         Usuario usuario = usuarioRepositorio.findById(dto.idUsuario())
                 .orElseThrow(() -> new BadRequestException("Usuario no encontrado con cédula: " + dto.idUsuario()));
-        Reserva reserva = reservaRepositorio.findById(dto.idReserva())
-                .orElseThrow(() -> new BadRequestException("Reserva no encontrada con ID: " + dto.idReserva()));
 
         if (dto.puntuacion() < 1 || dto.puntuacion() > 5) {
             throw new BadRequestException("La puntuación debe estar entre 1 y 5");
         }
 
-        Comentario comentario = comentarioMapper.fromRequestDTO(dto, usuario, reserva);
+        Comentario comentario = comentarioMapper.fromRequestDTO(dto, usuario);
+        comentario.setFechaComentario(new Date(System.currentTimeMillis()));
 
         try {
             Comentario saved = comentarioRepositorio.save(comentario);
@@ -74,10 +70,8 @@ public class ComentarioServicio {
 
         Usuario usuario = usuarioRepositorio.findById(dto.idUsuario())
                 .orElseThrow(() -> new BadRequestException("Usuario no encontrado con cédula: " + dto.idUsuario()));
-        Reserva reserva = reservaRepositorio.findById(dto.idReserva())
-                .orElseThrow(() -> new BadRequestException("Reserva no encontrada con ID: " + dto.idReserva()));
 
-        Comentario comentario = comentarioMapper.fromRequestDTO(dto, usuario, reserva);
+        Comentario comentario = comentarioMapper.fromRequestDTO(dto, usuario);
         comentario.setIdComentario(uuid);
 
         try {

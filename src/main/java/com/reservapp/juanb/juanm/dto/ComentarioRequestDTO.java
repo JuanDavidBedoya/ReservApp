@@ -1,7 +1,5 @@
 package com.reservapp.juanb.juanm.dto;
 
-import java.util.UUID;
-
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -17,8 +15,5 @@ public record ComentarioRequestDTO(
     String mensaje,
 
     @NotNull(message = "El usuario es obligatorio")
-    String idUsuario,
-
-    @NotNull(message = "La reserva es obligatoria")
-    UUID idReserva
+    String idUsuario
 ) {}

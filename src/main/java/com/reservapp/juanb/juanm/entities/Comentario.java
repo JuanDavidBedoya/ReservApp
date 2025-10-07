@@ -37,21 +37,15 @@ public class Comentario {
     @JoinColumn(name = "cedula_usuario")
     private Usuario usuario;
 
-    @ManyToOne
-    @JoinColumn(name = "id_reserva")
-    private Reserva reserva;
-
     public Comentario() {
     }
 
-    public Comentario(UUID idComentario, int puntuacion, String mensaje, Date fechaComentario, Usuario usuario,
-            Reserva reserva) {
+    public Comentario(UUID idComentario, int puntuacion, String mensaje, Date fechaComentario, Usuario usuario) {
         this.idComentario = idComentario;
         this.puntuacion = puntuacion;
         this.mensaje = mensaje;
         this.fechaComentario = fechaComentario;
         this.usuario = usuario;
-        this.reserva = reserva;
     }
 
     public UUID getIdComentario() {
@@ -92,13 +86,5 @@ public class Comentario {
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
-    }
-
-    public Reserva getReserva() {
-        return reserva;
-    }
-
-    public void setReserva(Reserva reserva) {
-        this.reserva = reserva;
     }
 }

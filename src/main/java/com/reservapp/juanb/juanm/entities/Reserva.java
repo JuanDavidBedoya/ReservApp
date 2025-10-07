@@ -51,9 +51,6 @@ public class Reserva {
     private Estado estado;
 
     @OneToMany(mappedBy = "reserva")
-    private List<Comentario> comentarios = new ArrayList<>();
-
-    @OneToMany(mappedBy = "reserva")
     private List<Notificacion> notificaciones = new ArrayList<>();
 
 
@@ -61,7 +58,7 @@ public class Reserva {
     }
 
     public Reserva(UUID idReserva, LocalDate fecha, LocalTime hora, int numeroPersonas, Usuario usuario, Mesa mesa,
-            Estado estado, List<Comentario> comentarios, List<Notificacion> notificaciones) {
+            Estado estado, List<Notificacion> notificaciones) {
         this.idReserva = idReserva;
         this.fecha = fecha;
         this.hora = hora;
@@ -69,7 +66,6 @@ public class Reserva {
         this.usuario = usuario;
         this.mesa = mesa;
         this.estado = estado;
-        this.comentarios = comentarios;
         this.notificaciones = notificaciones;
     }
 
@@ -127,14 +123,6 @@ public class Reserva {
 
     public void setEstado(Estado estado) {
         this.estado = estado;
-    }
-
-    public List<Comentario> getComentarios() {
-        return comentarios;
-    }
-
-    public void setComentarios(List<Comentario> comentarios) {
-        this.comentarios = comentarios;
     }
 
     public List<Notificacion> getNotificaciones() {
