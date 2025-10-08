@@ -17,14 +17,15 @@ public class EmailServicio {
     @Async // Se ejecuta en un hilo separado para no bloquear la aplicación
     public void enviarNotificacionSimple(String to, String subject, String text) {
         try {
+            //Crea el correo a enviar
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("juans.martinezb@uqvirtual.edu.co"); // Configura tu correo
+            message.setFrom("juans.martinezb@uqvirtual.edu.co"); 
             message.setTo(to);
             message.setSubject(subject);
             message.setText(text);
             mailSender.send(message);
         } catch (Exception e) {
-            // Aquí deberías usar un logger para registrar el error
+            
             System.err.println("Error al enviar el correo: " + e.getMessage());
         }
     }

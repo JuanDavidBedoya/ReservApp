@@ -20,6 +20,7 @@ public class MesaControlador {
         this.mesaServicio = mesaServicio;
     }
 
+    //Solo tiene método para Get lista y Get por Id debido a la lógica de Negocio
     @GetMapping
     public ResponseEntity<List<MesaDTO>> getAll() {
         List<MesaDTO> list = mesaServicio.findAll();

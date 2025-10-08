@@ -13,6 +13,8 @@ import com.reservapp.juanb.juanm.entities.Usuario;
 @Repository
 public interface UsuarioRepositorio extends JpaRepository<Usuario, String>{
 
+    //Métods adicionales usados en el Service
+
     boolean existsByCorreo(String correo);
     
     // Verificar si existe otro usuario con el mismo correo (excluyendo el actual)

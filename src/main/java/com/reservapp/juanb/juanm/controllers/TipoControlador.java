@@ -20,6 +20,7 @@ public class TipoControlador {
         this.tipoServicio = tipoServicio;
     }
 
+    //Solo tiene método para Get lista y Get por Id debido a la lógica de Negocio
     @GetMapping
     public ResponseEntity<List<TipoDTO>> getAll() {
         List<TipoDTO> list = tipoServicio.findAll();

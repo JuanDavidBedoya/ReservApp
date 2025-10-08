@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,8 +30,6 @@ public class ReservaControlador {
     public ReservaControlador(ReservaServicio reservaServicio) {
         this.reservaServicio = reservaServicio;
     }
-
-    //GET: obtener todas las reservas
     @GetMapping
     public ResponseEntity<List<ReservaResponseDTO>> getAll() {
         List<ReservaResponseDTO> list = reservaServicio.findAll();
@@ -40,14 +39,12 @@ public class ReservaControlador {
         return ResponseEntity.ok(list); // 200
     }
 
-    //GET: obtener una reserva por ID
     @GetMapping("/{uuid}")
     public ResponseEntity<ReservaResponseDTO> getById(@PathVariable("uuid") UUID uuid) {
         ReservaResponseDTO reserva = reservaServicio.findById(uuid);
         return ResponseEntity.ok(reserva); // 200
     }
 
-    //POST: crear nueva reserva
     @PostMapping
     public ResponseEntity<ReservaResponseDTO> save(@RequestBody ReservaRequestDTO dto) {
 
@@ -74,8 +71,6 @@ public class ReservaControlador {
         ReservaResponseDTO nuevaReserva = reservaServicio.save(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevaReserva); // 201
     }
-
-    //PUT: actualizar reserva existente
     @PutMapping("/{uuid}")
     public ResponseEntity<ReservaResponseDTO> update(@PathVariable("uuid") UUID uuid,
                                                      @RequestBody ReservaRequestDTO dto) {
@@ -93,10 +88,16 @@ public class ReservaControlador {
         return ResponseEntity.ok(actualizada); // 200
     }
 
-    //DELETE: eliminar reserva
     @DeleteMapping("/{uuid}")
     public ResponseEntity<Void> delete(@PathVariable("uuid") UUID uuid) {
         reservaServicio.delete(uuid);
+        return ResponseEntity.noContent().build(); // 204
+    }
+    
+    //Cancelar una reserva
+    @PatchMapping("/{uuid}/cancelar")
+    public ResponseEntity<Void> cancelarReserva(@PathVariable UUID uuid) {
+        reservaServicio.cancelarReserva(uuid);
         return ResponseEntity.noContent().build(); // 204
     }
 }

@@ -11,6 +11,8 @@ import com.reservapp.juanb.juanm.entities.Rol;
 @Repository
 public interface RolRepositorio extends JpaRepository<Rol, UUID>{
 
+    //Métods adicionales usados en el Service
+
     boolean existsByNombre(String nombre);
     Optional<Rol> findByNombre(String nombre);
 

@@ -62,12 +62,11 @@ public class Reserva {
     @Column(name = "encuesta_enviada", nullable = false)
     private boolean encuestaEnviada = false;
 
-
     public Reserva() {
     }
 
     public Reserva(UUID idReserva, LocalDate fecha, LocalTime hora, int numeroPersonas, Usuario usuario, Mesa mesa,
-            Estado estado, List<Notificacion> notificaciones) {
+            Estado estado, List<Notificacion> notificaciones, boolean recordatorio24hEnviado, boolean recordatorio1hEnviado, boolean encuestaEnviada) {
         this.idReserva = idReserva;
         this.fecha = fecha;
         this.hora = hora;
@@ -76,6 +75,9 @@ public class Reserva {
         this.mesa = mesa;
         this.estado = estado;
         this.notificaciones = notificaciones;
+        this.recordatorio24hEnviado = recordatorio24hEnviado;
+        this.recordatorio1hEnviado = recordatorio1hEnviado;
+        this.encuestaEnviada = encuestaEnviada;
     }
 
     public UUID getIdReserva() {

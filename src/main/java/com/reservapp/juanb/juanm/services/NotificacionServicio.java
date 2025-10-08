@@ -43,6 +43,8 @@ public class NotificacionServicio {
         return notificacionMapper.toResponseDTO(notificacion);
     }
 
+    //Método para registrar el envio de las notificaciones
+
     public void registrarNotificacion(Reserva reserva, String nombreTipo, String mensaje) {
         Tipo tipo = tipoRepositorio.findByNombre(nombreTipo)
                 .orElseThrow(() -> new IllegalStateException("Tipo de notificación no encontrado: " + nombreTipo));

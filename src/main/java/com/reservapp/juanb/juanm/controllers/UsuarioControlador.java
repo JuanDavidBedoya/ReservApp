@@ -34,7 +34,6 @@ public class UsuarioControlador {
 
     @PostMapping
     public ResponseEntity<UsuarioResponseDTO> save(@Valid @RequestBody UsuarioCreateDTO usuarioDTO) {
-        // Las validaciones de campos se delegan a @Valid
         
         // Validaciones de negocio
         if (usuarioServicio.existsById(usuarioDTO.cedula())) {

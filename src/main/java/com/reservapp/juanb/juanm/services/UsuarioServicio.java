@@ -53,7 +53,7 @@ public class UsuarioServicio {
                 usuarioDTO.correo(),
                 usuarioDTO.contrasena(), 
                 usuarioDTO.telefono(),
-                rolCliente // Asignamos el rol por defecto
+                rolCliente // De momento, se asigna el Rol de Cliente por defecto
         );
 
         try {

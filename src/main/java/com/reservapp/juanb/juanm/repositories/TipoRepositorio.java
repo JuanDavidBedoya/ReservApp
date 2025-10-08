@@ -11,6 +11,8 @@ import com.reservapp.juanb.juanm.entities.Tipo;
 @Repository
 public interface TipoRepositorio extends JpaRepository<Tipo, UUID>{
 
+    //Métods adicionales usados en el Service
+
     boolean existsByNombre(String nombre);
     Optional<Tipo> findByNombre(String nombre);
 

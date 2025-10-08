@@ -20,6 +20,7 @@ public class RolControlador {
         this.rolServicio = rolServicio;
     }
 
+    //Solo tiene método para Get lista y Get por Id debido a la lógica de Negocio
     @GetMapping
     public ResponseEntity<List<RolDTO>> getAll() {
         List<RolDTO> list = rolServicio.findAll();

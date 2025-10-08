@@ -1,7 +1,10 @@
 package com.reservapp.juanb.juanm.services;
 
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -58,7 +61,6 @@ public class ReservaServicio {
         this.pagoRepositorio = pagoRepositorio;
     }
 
-    //Obtener todas las reservas (GET)
     public List<ReservaResponseDTO> findAll() {
         return reservaRepositorio.findAll()
                 .stream()
@@ -66,16 +68,17 @@ public class ReservaServicio {
                 .collect(Collectors.toList());
     }
 
-    //Buscar por ID (GET /{id})
     public ReservaResponseDTO findById(UUID uuid) {
         Reserva reserva = reservaRepositorio.findById(uuid)
                 .orElseThrow(() -> new ResourceNotFoundException("Reserva no encontrada con ID: " + uuid));
         return reservaMapper.toResponseDTO(reserva);
     }
 
-    //Crear nueva reserva (POST)
     public ReservaResponseDTO save(ReservaRequestDTO dto) {
         try {
+
+            //Validaciones de Negocio
+
             Usuario usuario = usuarioRepositorio.findById(dto.cedulaUsuario())
                     .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
@@ -97,6 +100,8 @@ public class ReservaServicio {
             Reserva guardada = reservaRepositorio.save(reserva);
 
             try {
+
+                //Crea el cuerpo de la notificación y llama al método que la envia
 
                 int numeroMesa = guardada.getMesa().getNumeroMesa();
                 Optional<Pago> pagoOpt = pagoRepositorio.findByReserva(guardada);
@@ -130,7 +135,6 @@ public class ReservaServicio {
         }
     }
 
-    //Actualizar reserva (PUT)
     public ReservaResponseDTO update(UUID uuid, ReservaRequestDTO dto) {
         if (!reservaRepositorio.existsById(uuid)) {
             throw new ResourceNotFoundException("Reserva no encontrada con ID: " + uuid);
@@ -146,7 +150,7 @@ public class ReservaServicio {
                 .orElseThrow(() -> new ResourceNotFoundException("Estado no encontrado"));
 
         Reserva reserva = reservaMapper.fromRequestDTO(dto, usuario, mesa, estado);
-        reserva.setIdReserva(uuid); // mantener ID original
+        reserva.setIdReserva(uuid); 
 
         if (exceedsCapacity(reserva)) {
             throw new BadRequestException("El número de personas excede la capacidad de la mesa");
@@ -156,7 +160,48 @@ public class ReservaServicio {
         return reservaMapper.toResponseDTO(actualizada);
     }
 
-    //Eliminar reserva (DELETE)
+    //Cancelar una reserva
+
+    public void cancelarReserva(UUID uuid) {
+
+        Reserva reserva = reservaRepositorio.findById(uuid)
+            .orElseThrow(() -> new ResourceNotFoundException("Reserva no encontrada con ID: " + uuid));
+            
+        Estado estadoCancelado = estadoRepositorio.findByNombre("Cancelada")
+            .orElseThrow(() -> new IllegalStateException("El estado 'Cancelada' no se encuentra en la base de datos."));
+
+        //Cambia el estado de la reserva a cancelado
+        reserva.setEstado(estadoCancelado);
+        reservaRepositorio.save(reserva);
+
+        //Crea el cuerpo de la notificación de cancelación
+        try {
+            int numeroMesa = reserva.getMesa().getNumeroMesa();
+            double monto = pagoRepositorio.findByReserva(reserva).map(Pago::getMonto).orElse(0.0);
+
+            String asunto = "Su Reserva ha sido cancelada";
+            String cuerpo = String.format(
+                "Hola %s,\n\nSu reserva con los siguientes detalles ha sido cancelada:\n" +
+                "- Fecha: %s\n" +
+                "- Hora: %s\n" +
+                "- Mesa N°: %d\n" +
+                "- Monto: $%.2f",
+                reserva.getUsuario().getNombre(),
+                reserva.getFecha(),
+                reserva.getHora(),
+                numeroMesa,
+                monto
+            );
+
+            emailServicio.enviarNotificacionSimple(reserva.getUsuario().getCorreo(), asunto, cuerpo);
+            notificacionServicio.registrarNotificacion(reserva, "Cancelación", cuerpo);
+            
+        } catch (Exception e) {
+
+            System.err.println("La reserva se canceló, pero falló el envío de la notificación: " + e.getMessage());
+        }
+    }
+
     public void delete(UUID uuid) {
         try {
             if (!reservaRepositorio.existsById(uuid)) {
@@ -176,7 +221,7 @@ public class ReservaServicio {
 
     //Validar si la mesa está libre ese día (RF20)
     public boolean isMesaDisponible(Mesa mesa, LocalDate fecha, LocalTime horaInicioNueva) {
-        // Calcular hora de fin (2 horas después)
+  
         LocalTime inicio = horaInicioNueva;
         LocalTime fin = inicio.plusHours(2);
 
@@ -194,6 +239,38 @@ public class ReservaServicio {
             }
         }
         return true; // libre
+    }
+
+    public Long verificarTiempoParaReserva(UUID uuid) {
+        // Para esta prueba, inyecta ReservaRepositorio en tu controlador si no lo tienes
+        Reserva reserva = reservaRepositorio.findById(uuid)
+                .orElseThrow(() -> new ResourceNotFoundException("Reserva no encontrada con ID: " + uuid));
+
+        // 1. Combinamos la fecha y hora de la reserva
+        LocalDateTime fechaReserva = LocalDateTime.of(reserva.getFecha(), reserva.getHora());
+
+        // 2. Obtenemos la hora actual, USANDO LA MISMA ZONA HORARIA que el planificador
+        LocalDateTime ahora = LocalDateTime.now(ZoneId.of("America/Bogota"));
+
+        // 3. Calculamos la duración entre ahora y la reserva
+        Duration duracion = Duration.between(ahora, fechaReserva);
+
+        // 4. Obtenemos las horas y minutos totales
+        long horasFaltantes = duracion.toHours();
+        long minutosRestantes = duracion.toMinutes() % 60; // El resto de los minutos
+
+        // 5. Imprimimos un reporte detallado en la consola de Spring Boot
+        System.out.println("======================================================");
+        System.out.println("DIAGNÓSTICO DE TIEMPO PARA RESERVA: " + uuid);
+        System.out.println("Hora Actual (Bogotá): " + ahora);
+        System.out.println("Hora de la Reserva:   " + fechaReserva);
+        System.out.println("------------------------------------------------------");
+        System.out.println("Horas completas restantes: " + horasFaltantes);
+        System.out.println("Minutos restantes (adicionales): " + minutosRestantes);
+        System.out.println("Total de minutos restantes: " + duracion.toMinutes());
+        System.out.println("======================================================");
+
+        return horasFaltantes;
     }
 
 }

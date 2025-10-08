@@ -23,6 +23,7 @@ public class NotificacionControlador {
         this.notificacionServicio = notificacionServicio;
     }
 
+    //Solo tiene método para Get lista y Get por Id debido a la lógica de Negocio
     @GetMapping
     public ResponseEntity<List<NotificacionResponseDTO>> getAll() {
         List<NotificacionResponseDTO> notificaciones = notificacionServicio.findAll();

@@ -6,5 +6,5 @@ public record MesaDTO(
     UUID idMesa,
     int numeroMesa,
     int capacidad,
-    String nombreEstado // Enviamos solo el nombre del estado
+    String nombreEstado 
 ) {}

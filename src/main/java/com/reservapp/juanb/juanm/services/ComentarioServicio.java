@@ -47,6 +47,8 @@ public class ComentarioServicio {
     public ComentarioResponseDTO save(ComentarioRequestDTO dto) {
         Usuario usuario = usuarioRepositorio.findById(dto.idUsuario())
                 .orElseThrow(() -> new BadRequestException("Usuario no encontrado con cédula: " + dto.idUsuario()));
+        
+        // Validaciones de negocio
 
         if (dto.puntuacion() < 1 || dto.puntuacion() > 5) {
             throw new BadRequestException("La puntuación debe estar entre 1 y 5");

@@ -16,6 +16,7 @@ public class EstadoControlador {
         this.estadoServicio = estadoServicio;
     }
 
+    //Solo tiene método para Get lista debido a la lógica de Negocio
     @GetMapping
     public ResponseEntity<List<EstadoDTO>> getAll() {
         List<EstadoDTO> list = estadoServicio.findAll();

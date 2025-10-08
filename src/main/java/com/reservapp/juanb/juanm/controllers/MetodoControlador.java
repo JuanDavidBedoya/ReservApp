@@ -20,6 +20,7 @@ public class MetodoControlador {
         this.metodoServicio = metodoServicio;
     }
 
+    //Solo tiene método para Get lista y Get por Id debido a la lógica de Negocio
     @GetMapping
     public ResponseEntity<List<MetodoDTO>> getAll() {
         List<MetodoDTO> list = metodoServicio.findAll();

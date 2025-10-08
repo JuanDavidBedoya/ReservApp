@@ -22,6 +22,7 @@ import com.reservapp.juanb.juanm.services.ComentarioServicio;
 @RequestMapping("/comentarios")
 public class ComentarioControlador {
 
+    //Inyección de Dependencias
     private final ComentarioServicio comentarioServicio;
 
     public ComentarioControlador(ComentarioServicio comentarioServicio) {

@@ -1,4 +1,3 @@
-// Ubicación: com/reservapp/juanb/juanm/dto/UsuarioUpdateDTO.java
 package com.reservapp.juanb.juanm.dto;
 
 import java.util.UUID;

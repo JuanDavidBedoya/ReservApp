@@ -34,7 +34,7 @@ public class ComentarioMapper {
         Comentario comentario = new Comentario();
         comentario.setPuntuacion(dto.puntuacion());
         comentario.setMensaje(dto.mensaje());
-        comentario.setFechaComentario(new Date(0)); // se asigna fecha actual
+        comentario.setFechaComentario(new Date(0)); 
         comentario.setUsuario(usuario);
         return comentario;
     }
