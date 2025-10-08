@@ -8,6 +8,5 @@ public record NotificacionResponseDTO(
         String mensaje,
         Date fechaEnvio,
         String tipo,
-        String estado,
         UUID idReserva
 ) {}

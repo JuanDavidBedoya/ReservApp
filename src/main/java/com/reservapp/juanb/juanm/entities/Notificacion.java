@@ -38,21 +38,15 @@ public class Notificacion {
     @JoinColumn(name = "id_reserva")
     private Reserva reserva;
 
-    @ManyToOne
-    @JoinColumn(name = "id_estado")
-    private Estado estado;
-
     public Notificacion() {
     }
 
-    public Notificacion(UUID idNotificacion, String mensaje, Date fechaEnvio, Tipo tipo, Reserva reserva,
-            Estado estado) {
+    public Notificacion(UUID idNotificacion, String mensaje, Date fechaEnvio, Tipo tipo, Reserva reserva) {
         this.idNotificacion = idNotificacion;
         this.mensaje = mensaje;
         this.fechaEnvio = fechaEnvio;
         this.tipo = tipo;
         this.reserva = reserva;
-        this.estado = estado;
     }
 
     public UUID getIdNotificacion() {
@@ -94,12 +88,5 @@ public class Notificacion {
     public void setReserva(Reserva reserva) {
         this.reserva = reserva;
     }
-
-    public Estado getEstado() {
-        return estado;
-    }
-
-    public void setEstado(Estado estado) {
-        this.estado = estado;
-    }
 }
+

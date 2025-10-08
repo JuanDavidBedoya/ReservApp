@@ -53,6 +53,15 @@ public class Reserva {
     @OneToMany(mappedBy = "reserva")
     private List<Notificacion> notificaciones = new ArrayList<>();
 
+    @Column(name = "recordatorio_24h_enviado", nullable = false)
+    private boolean recordatorio24hEnviado = false;
+
+    @Column(name = "recordatorio_1h_enviado", nullable = false)
+    private boolean recordatorio1hEnviado = false;
+
+    @Column(name = "encuesta_enviada", nullable = false)
+    private boolean encuestaEnviada = false;
+
 
     public Reserva() {
     }
@@ -131,5 +140,29 @@ public class Reserva {
 
     public void setNotificaciones(List<Notificacion> notificaciones) {
         this.notificaciones = notificaciones;
+    }
+
+    public boolean isRecordatorio24hEnviado() {
+        return recordatorio24hEnviado;
+    }
+
+    public void setRecordatorio24hEnviado(boolean recordatorio24hEnviado) {
+        this.recordatorio24hEnviado = recordatorio24hEnviado;
+    }
+
+    public boolean isRecordatorio1hEnviado() {
+        return recordatorio1hEnviado;
+    }
+
+    public void setRecordatorio1hEnviado(boolean recordatorio1hEnviado) {
+        this.recordatorio1hEnviado = recordatorio1hEnviado;
+    }
+
+    public boolean isEncuestaEnviada() {
+        return encuestaEnviada;
+    }
+
+    public void setEncuestaEnviada(boolean encuestaEnviada) {
+        this.encuestaEnviada = encuestaEnviada;
     }
 } 

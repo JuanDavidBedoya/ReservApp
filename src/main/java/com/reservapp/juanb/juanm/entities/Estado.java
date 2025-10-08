@@ -33,20 +33,15 @@ public class Estado {
     @OneToMany(mappedBy = "estado")
     private List<Pago> pagos = new ArrayList<>();
 
-    @OneToMany(mappedBy = "estado")
-    private List<Notificacion> notificaciones = new ArrayList<>();
-
     public Estado() {
     }
 
-    public Estado(UUID idEstado, String nombre, List<Mesa> mesas, List<Reserva> reservas, List<Pago> pagos,
-            List<Notificacion> notificaciones) {
+    public Estado(UUID idEstado, String nombre, List<Mesa> mesas, List<Reserva> reservas, List<Pago> pagos) {
         this.idEstado = idEstado;
         this.nombre = nombre;
         this.mesas = mesas;
         this.reservas = reservas;
         this.pagos = pagos;
-        this.notificaciones = notificaciones;
     }
 
     public UUID getIdEstado() {
@@ -88,12 +83,5 @@ public class Estado {
     public void setPagos(List<Pago> pagos) {
         this.pagos = pagos;
     }
-
-    public List<Notificacion> getNotificaciones() {
-        return notificaciones;
-    }
-
-    public void setNotificaciones(List<Notificacion> notificaciones) {
-        this.notificaciones = notificaciones;
-    }
 }
+

@@ -1,5 +1,6 @@
 package com.reservapp.juanb.juanm.repositories;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,5 +13,6 @@ import com.reservapp.juanb.juanm.entities.Reserva;
 public interface PagoRepositorio extends JpaRepository<Pago, UUID>{
     
     boolean existsByReserva(Reserva reserva);
+    Optional<Pago> findByReserva(Reserva reserva);
     
 }

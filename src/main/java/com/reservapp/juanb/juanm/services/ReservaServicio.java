@@ -3,6 +3,7 @@ package com.reservapp.juanb.juanm.services;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -13,6 +14,7 @@ import com.reservapp.juanb.juanm.dto.ReservaRequestDTO;
 import com.reservapp.juanb.juanm.dto.ReservaResponseDTO;
 import com.reservapp.juanb.juanm.entities.Estado;
 import com.reservapp.juanb.juanm.entities.Mesa;
+import com.reservapp.juanb.juanm.entities.Pago;
 import com.reservapp.juanb.juanm.entities.Reserva;
 import com.reservapp.juanb.juanm.entities.Usuario;
 import com.reservapp.juanb.juanm.exceptions.BadRequestException;
@@ -20,6 +22,7 @@ import com.reservapp.juanb.juanm.exceptions.ResourceNotFoundException;
 import com.reservapp.juanb.juanm.mapper.ReservaMapper;
 import com.reservapp.juanb.juanm.repositories.EstadoRepositorio;
 import com.reservapp.juanb.juanm.repositories.MesaRepositorio;
+import com.reservapp.juanb.juanm.repositories.PagoRepositorio;
 import com.reservapp.juanb.juanm.repositories.ReservaRepositorio;
 import com.reservapp.juanb.juanm.repositories.UsuarioRepositorio;
 
@@ -31,19 +34,28 @@ public class ReservaServicio {
     private final MesaRepositorio mesaRepositorio;
     private final EstadoRepositorio estadoRepositorio;
     private final ReservaMapper reservaMapper;
+    private final EmailServicio emailServicio;
+    private final NotificacionServicio notificacionServicio;
+    private final PagoRepositorio pagoRepositorio;
 
     public ReservaServicio(
             ReservaRepositorio reservaRepositorio,
             UsuarioRepositorio usuarioRepositorio,
             MesaRepositorio mesaRepositorio,
             EstadoRepositorio estadoRepositorio,
-            ReservaMapper reservaMapper
+            ReservaMapper reservaMapper,
+            EmailServicio emailServicio, 
+            NotificacionServicio notificacionServicio,
+            PagoRepositorio pagoRepositorio
     ) {
         this.reservaRepositorio = reservaRepositorio;
         this.usuarioRepositorio = usuarioRepositorio;
         this.mesaRepositorio = mesaRepositorio;
         this.estadoRepositorio = estadoRepositorio;
         this.reservaMapper = reservaMapper;
+        this.emailServicio = emailServicio; 
+        this.notificacionServicio = notificacionServicio;
+        this.pagoRepositorio = pagoRepositorio;
     }
 
     //Obtener todas las reservas (GET)
@@ -75,18 +87,44 @@ public class ReservaServicio {
 
             Reserva reserva = reservaMapper.fromRequestDTO(dto, usuario, mesa, estado);
 
-            // Validar capacidad
             if (exceedsCapacity(reserva)) {
                 throw new BadRequestException("El número de personas excede la capacidad de la mesa");
             }
-
             if (!isMesaDisponible(mesa, reserva.getFecha(), reserva.getHora())) {
-            throw new BadRequestException("La mesa ya tiene una reserva en ese horario");
+                throw new BadRequestException("La mesa ya tiene una reserva en ese horario");
             } 
 
             Reserva guardada = reservaRepositorio.save(reserva);
-            return reservaMapper.toResponseDTO(guardada);
 
+            try {
+
+                int numeroMesa = guardada.getMesa().getNumeroMesa();
+                Optional<Pago> pagoOpt = pagoRepositorio.findByReserva(guardada);
+                double monto = pagoOpt.map(Pago::getMonto).orElse(0.0);
+
+                String asunto = "¡Reserva Confirmada!";
+                String cuerpo = String.format(
+                    "Hola %s,\n\nTu reserva ha sido confirmada con los siguientes detalles:\n" +
+                    "- Fecha: %s\n" +
+                    "- Hora: %s\n" +
+                    "- Mesa N°: %d\n" +
+                    "- Monto: $%.2f\n\n" +
+                    "¡Te esperamos!",
+                    guardada.getUsuario().getNombre(),
+                    guardada.getFecha(),
+                    guardada.getHora(),
+                    numeroMesa,
+                    monto
+                );
+                
+                emailServicio.enviarNotificacionSimple(guardada.getUsuario().getCorreo(), asunto, cuerpo);
+                notificacionServicio.registrarNotificacion(guardada, "Confirmación", cuerpo);
+
+            } catch (Exception e) {
+                System.err.println("La reserva se guardó, pero falló el envío de la notificación: " + e.getMessage());
+            }
+            
+            return reservaMapper.toResponseDTO(guardada);
         } catch (DataAccessException e) {
             throw new BadRequestException("Error al guardar la reserva: " + e.getMessage());
         }
@@ -157,4 +195,5 @@ public class ReservaServicio {
         }
         return true; // libre
     }
+
 }
