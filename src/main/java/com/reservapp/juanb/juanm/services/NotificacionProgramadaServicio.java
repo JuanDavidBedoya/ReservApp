@@ -39,7 +39,7 @@ public class NotificacionProgramadaServicio {
     }
 
 
-    @Scheduled(cron = "0 */10 * * * *") // Se ejecuta automaticamente cada 10 min
+    @Scheduled(cron = "0 */10 * * * *") //Se ejecuta automaticamente cada 10 min
     public void enviarRecordatorios1h() {
         
         System.out.println("--- Ejecutando tarea de recordatorios-----");
@@ -51,7 +51,7 @@ public class NotificacionProgramadaServicio {
             long horasFaltantes = reservaServicio.verificarTiempoParaReserva(r.getIdReserva());
             System.out.println("Revisando reserva " + r.getIdReserva() + ". Minutos faltantes: " + horasFaltantes);
 
-            if (horasFaltantes == 0 && !r.isRecordatorio1hEnviado()) {
+            if ((horasFaltantes == 0 && !r.isRecordatorio1hEnviado()) && r.getEstado().getNombre().equalsIgnoreCase("Pagada")) {
                 System.out.println("¡CONDICIÓN CUMPLIDA! Enviando notificación para reserva " + r.getIdReserva());
 
                 String asunto = "¡Tu reserva es en menos de una hora!";
@@ -105,7 +105,7 @@ public class NotificacionProgramadaServicio {
             long horasFaltantes = reservaServicio.verificarTiempoParaReserva(r.getIdReserva());
             System.out.println("Revisando reserva " + r.getIdReserva() + ". Minutos faltantes: " + horasFaltantes);
 
-            if ((horasFaltantes == -2 || horasFaltantes == -3) && !r.isEncuestaEnviada()) {
+            if (((horasFaltantes == -2 || horasFaltantes == -3) && !r.isEncuestaEnviada()) && r.getEstado().getNombre().equalsIgnoreCase("Pagada")) {
                 System.out.println("¡CONDICIÓN CUMPLIDA! Enviando notificación para reserva " + r.getIdReserva());
 
                 String asunto = "¡Gracias por Visitarnos!";
@@ -133,13 +133,13 @@ public class NotificacionProgramadaServicio {
             String estadoActual = reserva.getEstado().getNombre();
 
             try {
-                // Cancelar reservas no pagadas faltando 1 hora
+                // Cancelar reservas no pagadas faltando 2 horas
                 if (estadoActual.equalsIgnoreCase("Confirmada")) {
                     boolean tienePagoConfirmado = reserva.getEstado() != null &&
                             reserva.getEstado().getNombre().equalsIgnoreCase("Pagada");
 
                     if (!tienePagoConfirmado &&
-                            Duration.between(ahora, fechaHoraReserva).toMinutes() <= 60 &&
+                            Duration.between(ahora, fechaHoraReserva).toMinutes() <= 120 &&
                             ahora.isBefore(fechaHoraReserva)) {
 
                         Estado estadoCancelada = estadoRepositorio.findByNombre("Cancelada")
@@ -155,6 +155,18 @@ public class NotificacionProgramadaServicio {
                         mesaRepositorio.save(mesa);
 
                         System.out.println(" Reserva cancelada automáticamente: " + reserva.getIdReserva());
+
+                        String asunto = "Tu reserva ha sido cancelada";
+                        String cuerpo = String.format(
+                            "Hola %s,\n\nTe informamos que tu reserva para el día %s a las %s ha sido cancelada " +
+                            "automáticamente debido a que no se recibió el pago en el tiempo estipulado.",
+                            reserva.getUsuario().getNombre(),
+                            reserva.getFecha(),
+                            reserva.getHora()
+                        );
+                        
+                        emailServicio.enviarNotificacionSimple(reserva.getUsuario().getCorreo(), asunto, cuerpo);
+                        notificacionServicio.registrarNotificacion(reserva, "Cancelación", cuerpo);
                     }
                 }
 
