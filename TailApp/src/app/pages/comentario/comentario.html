@@ -1,0 +1,56 @@
+<div class="min-h-[calc(101.9vh-6rem)] bg-[#ffffff] text-white flex flex-col items-center pt-82">
+  <div class="bg-[#1a1a1a] p-8 rounded-2xl shadow-xl w-full max-w-lg flex flex-col gap-6">
+
+    <h1 class="text-3xl font-bold text-center text-[#ffffff]">Deja tu comentario</h1>
+    <p class="text-gray-400 text-center">Cuéntanos cómo fue tu experiencia con la reserva</p>
+
+    <!-- Valoración de estrellas -->
+    <div class="flex justify-center items-center gap-2 mt-4">
+      @for (star of stars; track $index) {
+        <svg
+          (click)="setRating($index + 1)"
+          [ngClass]="{
+            'text-white scale-110': $index < rating,
+            'text-gray-700': $index >= rating
+          }"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          class="w-10 h-10 cursor-pointer transition-transform duration-200 hover:scale-125"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M12 2.25c.384 0 .735.216.9.558l2.262 4.583 5.06.736a.937.937 0 01.518 1.598l-3.662 3.572.864 5.04a.937.937 0 01-1.36.986L12 17.347l-4.582 2.414a.937.937 0 01-1.36-.986l.864-5.04-3.662-3.572a.937.937 0 01.518-1.598l5.06-.736 2.262-4.583A.937.937 0 0112 2.25z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      }
+    </div>
+
+    <!-- Campo de comentario -->
+    <textarea
+      [(ngModel)]="comentario"
+      rows="4"
+      class="bg-[#0d0d0d] border border-[#4e4e4e] rounded-xl w-full p-3 text-white
+             focus:border-[#ffffff] outline-none resize-none"
+      placeholder="Escribe tu comentario aquí..."
+    ></textarea>
+
+    <!-- Botones -->
+    <div class="flex justify-center gap-6 mt-4">
+      <button
+        (click)="enviarComentario()"
+        class="bg-[#ffffff] hover:bg-[#4e4e4e] text-black font-semibold px-6 py-2 rounded-xl transition duration-200"
+      >
+        Enviar
+      </button>
+
+      <button
+        (click)="cancelar()"
+        class="bg-[#4e4e4e] hover:bg-[#3a3a3a] text-[#ffffff] font-semibold px-6 py-2 rounded-xl transition duration-200"
+      >
+        Cancelar
+      </button>
+    </div>
+  </div>
+</div>

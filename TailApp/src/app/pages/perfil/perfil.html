@@ -1,8 +1,8 @@
-<section class="min-h-screen bg-[#0d0d0d] text-white flex flex-col items-center pt-32 px-6">
+<section class="min-h-[calc(101.9vh-6rem)] bg-[#ffffff] text-white flex flex-col items-center pt-64">
   <div class="max-w-7xl w-full grid grid-cols-1 md:grid-cols-3 gap-8">
 
-    <!-- 🧍‍♂️ Card izquierda -->
-    <div class="bg-[#1a1a1a] p-6 rounded-2xl shadow-lg flex flex-col items-center">
+    <!-- Card izquierda -->
+    <div class="bg-[#1a1a1a] p-32 rounded-2xl shadow-lg flex flex-col items-center">
       <!-- Imagen de perfil -->
       <div class="w-40 h-40 rounded-full bg-[#4e4e4e] flex items-center justify-center text-white text-lg font-semibold mb-4">
         Foto
@@ -10,49 +10,51 @@
 
       <!-- Datos del usuario -->
       <div class="text-center space-y-2">
-        <h2 class="text-2xl font-bold text-[#d4b098]">{{ user.nombre }}</h2>
+        <h2 class="text-2xl font-bold text-[#ffffff]">{{ user.nombre }}</h2>
         <p class="text-gray-300">{{ user.correo }}</p>
         <p class="text-gray-400">{{ user.telefono }}</p>
       </div>
     </div>
 
-    <!-- 📝 Card derecha -->
-    <div class="md:col-span-2 bg-[#1a1a1a] p-8 rounded-2xl shadow-lg">
-      <h2 class="text-2xl font-bold text-[#d4b098] mb-6">Actualizar Datos</h2>
+    <!-- Card derecha -->
+    <div class="md:col-span-2 bg-[#1a1a1a] p-32 rounded-2xl shadow-lg">
+      <h2 class="text-2xl font-bold text-[#ffffff] mb-6">Actualizar Datos</h2>
 
       <form class="space-y-4" (ngSubmit)="actualizarDatos()">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label class="block mb-1 text-sm text-gray-400">Nombre</label>
-            <input type="text" [(ngModel)]="formData.nombre" name="nombre" class="w-full p-2 rounded bg-[#0d0d0d] border border-[#4e4e4e] focus:border-[#d4b098] outline-none">
+            <input type="text" [(ngModel)]="formData.nombre" name="nombre" class="w-full p-2 rounded bg-[#0d0d0d] border border-[#4e4e4e] focus:border-[#ffffff] outline-none">
           </div>
 
           <div>
             <label class="block mb-1 text-sm text-gray-400">Correo</label>
-            <input type="email" [(ngModel)]="formData.correo" name="correo" class="w-full p-2 rounded bg-[#0d0d0d] border border-[#4e4e4e] focus:border-[#d4b098] outline-none">
+            <input type="email" [(ngModel)]="formData.correo" name="correo" class="w-full p-2 rounded bg-[#0d0d0d] border border-[#4e4e4e] focus:border-[#ffffff] outline-none">
           </div>
 
           <div>
             <label class="block mb-1 text-sm text-gray-400">Contraseña</label>
-            <input type="password" [(ngModel)]="formData.password" name="password" class="w-full p-2 rounded bg-[#0d0d0d] border border-[#4e4e4e] focus:border-[#d4b098] outline-none">
+            <input type="password" [(ngModel)]="formData.password" name="password" class="w-full p-2 rounded bg-[#0d0d0d] border border-[#4e4e4e] focus:border-[#ffffff] outline-none">
           </div>
 
           <div>
             <label class="block mb-1 text-sm text-gray-400">Verificar Contraseña</label>
-            <input type="password" [(ngModel)]="formData.confirmarPassword" name="confirmarPassword" class="w-full p-2 rounded bg-[#0d0d0d] border border-[#4e4e4e] focus:border-[#d4b098] outline-none">
+            <input type="password" [(ngModel)]="formData.confirmarPassword" name="confirmarPassword" class="w-full p-2 rounded bg-[#0d0d0d] border border-[#4e4e4e] focus:border-[#ffffff] outline-none">
           </div>
 
           <div class="md:col-span-2">
             <label class="block mb-1 text-sm text-gray-400">Teléfono</label>
-            <input type="tel" [(ngModel)]="formData.telefono" name="telefono" class="w-full p-2 rounded bg-[#0d0d0d] border border-[#4e4e4e] focus:border-[#d4b098] outline-none">
+            <input type="tel" [(ngModel)]="formData.telefono" name="telefono" class="w-full p-2 rounded bg-[#0d0d0d] border border-[#4e4e4e] focus:border-[#ffffff] outline-none">
           </div>
         </div>
 
-        <button
-          type="submit"
-          class="mt-6 px-6 py-3 bg-[#d4b098] hover:bg-[#b98a76] text-[#0d0d0d] font-semibold rounded-lg shadow-md transition">
-          Actualizar Datos
-        </button>
+        <div class="flex justify-center gap-6 mt-8">
+          <button
+            type="submit"
+            class="mt-6 px-6 py-3 bg-[#ffffff] hover:bg-[#4e4e4e] text-[#0d0d0d] font-semibold rounded-lg shadow-md transition">
+            Actualizar Datos
+          </button>
+        </div>
       </form>
     </div>
 

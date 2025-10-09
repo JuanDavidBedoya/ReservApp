@@ -1,0 +1,78 @@
+<section class="min-h-[calc(101.9vh-6rem)] bg-[#ffffff] text-white flex flex-col items-center pt-64"> <!--footer solucion-->
+    
+  <div class="max-w-7xl w-full grid grid-cols-1 md:grid-cols-3 gap-8">
+
+    <!-- Card calendario -->
+    <div class="bg-[#1a1a1a] p-8 rounded-2xl shadow-lg flex flex-col items-center">
+      <h2 class="text-2xl font-bold text-[#ffffff] mb-4">Selecciona la Fecha</h2>
+
+      <input
+        type="date"
+        [(ngModel)]="reservaData.fecha"
+        (ngModelChange)="onChange()"
+        class="p-3 w-full bg-[#0d0d0d] text-white rounded border border-[#4e4e4e] focus:border-[#ffffff] outline-none cursor-pointer ">
+
+        
+    </div>
+
+    <!-- Card formulario -->
+    <div class="md:col-span-2 bg-[#1a1a1a] p-32 rounded-2xl shadow-lg">
+      <h2 class="text-2xl font-bold text-[#ffffff] mb-6">Detalles de la Reserva</h2>
+
+      <form class="space-y-4" (ngSubmit)="realizarReserva()">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block mb-1 text-sm text-gray-400">Cédula</label>
+            <input
+              type="text"
+              [(ngModel)]="reservaData.cedula"
+              name="cedula"
+              (ngModelChange)="onChange()"
+              class="w-full p-2 rounded bg-[#0d0d0d] border border-[#4e4e4e] focus:border-[#ffffff] outline-none appearance-none">
+
+              
+          </div>
+
+          <div>
+            <label class="block mb-1 text-sm text-gray-400">Número de Personas</label>
+            <input
+              type="number"
+              min="1"
+              [(ngModel)]="reservaData.personas"
+              name="personas"
+              (ngModelChange)="onChange()"
+              class="w-full p-2 rounded bg-[#0d0d0d] border border-[#4e4e4e] focus:border-[#ffffff] outline-none">
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="block mb-1 text-sm text-gray-400">Hora de la Reserva</label>
+            <input
+              type="time"
+              [(ngModel)]="reservaData.hora"
+              name="hora"
+              (ngModelChange)="onChange()"
+              class="w-full p-2 rounded bg-[#0d0d0d] border border-[#4e4e4e] focus:border-[#ffffff] outline-none">
+          </div>
+        </div>
+
+        <!-- Botones centrados -->
+        <div class="flex justify-center gap-6 mt-8">
+          <button
+            type="submit"
+            [disabled]="!formValid"
+            class="px-6 py-3 bg-[#ffffff] hover:bg-[#4e4e4e] disabled:bg-gray-600 disabled:cursor-not-allowed text-[#0d0d0d] font-semibold rounded-lg shadow-md transition">
+            Realizar Reserva
+          </button>
+
+          <button
+            type="button"
+            (click)="cancelar()"
+            class="px-6 py-3 bg-[#4e4e4e] hover:bg-[#3a3a3a] text-white font-semibold rounded-lg shadow-md transition">
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</section>

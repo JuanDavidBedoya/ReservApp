@@ -1,6 +1,5 @@
-<section
-  class="text-center flex flex-col items-center justify-center min-h-[calc(100vh-180px)] bg-white px-6"
->
+<section class="min-h-[calc(101.9vh-6rem)] bg-[#ffffff] text-white flex flex-col items-center pt-110">
+  
   <h1 class="text-4xl md:text-5xl font-bold text-[#0d0d0d] mb-4">
     Bienvenido a <span class="text-[#4e4e4e]">Nuestro Restaurante</span>
   </h1>
@@ -10,6 +9,7 @@
   </p>
 
   <button
+    (click)="hacerReserva()"
     class="mt-6 px-6 py-3 bg-[#0d0d0d] hover:bg-[#4e4e4e] text-white font-semibold rounded-lg shadow-md transition"
   >
     Hacer una reserva
