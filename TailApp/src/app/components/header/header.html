@@ -1,6 +1,15 @@
-<header>
-    <nav>
-        <a href="/">Home</a>
-        <a href="/inicio-sesion">Iniciar Sesión</a>
+<header class="bg-[#0d0d0d] shadow-md fixed top-0 left-0 w-full z-50">
+  <div class="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
+    <div class="text-2xl font-bold text-[#ffffff]">ReservApp</div>
+
+    <nav class="hidden md:flex space-x-8 text-white font-medium">
+      @if (!isInicio()) {
+        <a routerLink="/" class="hover:text-[#4e4e4e] transition">Inicio</a>
+      }
+      <a href="#" class="hover:text-[#4e4e4e] transition">Reservas</a>
+      <a href="#" class="hover:text-[#4e4e4e] transition">Contacto</a>
+      <a href="#" class="hover:text-[#4e4e4e] transition">Iniciar Sesión</a>
+      <a href="#" class="hover:text-[#4e4e4e] transition">Registrarse</a>
     </nav>
+  </div>
 </header>

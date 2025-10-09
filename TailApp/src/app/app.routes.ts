@@ -1,9 +1,7 @@
 import { Routes } from '@angular/router';
-import { Home } from './pages/home/home';
-import { InicioSesion } from './pages/inicio-sesion/inicio-sesion';
+import { HomePublic } from './pages/home-public/home-public/home-public';
 
 export const routes: Routes = [
-    {path: '', component:Home},
-    {path: 'inicio-sesion', component:InicioSesion},
-    {path: '**', redirectTo: ''}
+  { path: '', component: HomePublic },
+  { path: '**', redirectTo: '' },
 ];
