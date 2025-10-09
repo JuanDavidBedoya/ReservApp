@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.dao.DataAccessException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import com.reservapp.juanb.juanm.dto.UsuarioCreateDTO;
 import com.reservapp.juanb.juanm.dto.UsuarioResponseDTO;
@@ -19,7 +22,7 @@ import com.reservapp.juanb.juanm.repositories.RolRepositorio;
 import com.reservapp.juanb.juanm.repositories.UsuarioRepositorio;
 
 @Service
-public class UsuarioServicio {
+public class UsuarioServicio implements UserDetailsService{
 
     private UsuarioRepositorio usuarioRepositorio;
     private RolRepositorio rolRepositorio;
@@ -106,4 +109,19 @@ public class UsuarioServicio {
     public boolean existsByCorreoAndCedulaNot(String correo, String cedula) {
         return usuarioRepositorio.existsByCorreoAndCedulaNot(correo, cedula);
     }
+
+    //Método de la implementación del Loggin
+    @Override
+        public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+            System.out.println("--- INTENTO DE LOGIN: Buscando usuario con cédula: " + username + " ---");
+            
+            Usuario usuario = usuarioRepositorio.findByCedula(username)
+                    .orElseThrow(() -> {
+                        System.err.println("--- LOGIN FALLIDO: Usuario no encontrado en la base de datos. ---");
+                        return new UsernameNotFoundException("Usuario no encontrado con cédula: " + username);
+                    });
+
+            System.out.println("--- LOGIN EXITOSO: Usuario encontrado: " + usuario.getNombre() + " con rol: " + usuario.getRol().getNombre() + " ---");
+            return usuario;
+}
 }

@@ -1,7 +1,12 @@
 package com.reservapp.juanb.juanm.entities;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,7 +18,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "usuarios")
-public class Usuario {
+public class Usuario implements UserDetails{
 
     @Id
     @Column(name = "cedula")
@@ -115,5 +120,42 @@ public class Usuario {
 
     public void setRol(Rol rol) {
         this.rol = rol;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // Le damos a Spring Security el rol del usuario en un formato que entiende.
+        return List.of(new SimpleGrantedAuthority("ROLE_" + rol.getNombre().toUpperCase()));
+    }
+
+    @Override
+    public String getPassword() {
+        return this.contrasena; // Devuelve la contraseña
+    }
+
+    @Override
+    public String getUsername() {
+        return this.cedula; // Usamos la cédula como "username"
+    }
+
+    // Métodos no usdaos pero necesrio implementarlos
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }
