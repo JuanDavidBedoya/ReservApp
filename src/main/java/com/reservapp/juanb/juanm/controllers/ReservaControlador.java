@@ -61,12 +61,6 @@ public class ReservaControlador {
         if (dto.cedulaUsuario() == null) {
             throw new BadRequestException("La reserva debe tener un usuario asociado");
         }
-        if (dto.idMesa() == null) {
-            throw new BadRequestException("La reserva debe tener una mesa asociada");
-        }
-        if (dto.idEstado() == null) {
-            throw new BadRequestException("La reserva debe tener un estado asociado");
-        }
         
         ReservaResponseDTO nuevaReserva = reservaServicio.save(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevaReserva); // 201
@@ -97,7 +91,7 @@ public class ReservaControlador {
     //Cancelar una reserva
     @PatchMapping("/{uuid}/cancelar")
     public ResponseEntity<Void> cancelarReserva(@PathVariable UUID uuid) {
-        reservaServicio.cancelarReserva(uuid);
+        reservaServicio.cancel(uuid);
         return ResponseEntity.noContent().build(); // 204
     }
 }

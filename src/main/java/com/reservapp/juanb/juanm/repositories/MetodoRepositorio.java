@@ -1,5 +1,6 @@
 package com.reservapp.juanb.juanm.repositories;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,4 +10,6 @@ import com.reservapp.juanb.juanm.entities.Metodo;
 
 @Repository
 public interface MetodoRepositorio extends JpaRepository<Metodo, UUID>{
+
+    Optional<Metodo> findByIdMetodo(UUID idMetodo);
 }

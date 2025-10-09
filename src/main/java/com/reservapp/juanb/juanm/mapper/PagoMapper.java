@@ -29,7 +29,6 @@ public class PagoMapper {
     public Pago fromRequestDTO(PagoRequestDTO dto, Metodo metodo, Estado estado, Reserva reserva) {
         Pago pago = new Pago();
         pago.setMonto(dto.monto());
-        pago.setFechaPago(dto.fechaPago());
         pago.setMetodo(metodo);
         pago.setEstado(estado);
         pago.setReserva(reserva);

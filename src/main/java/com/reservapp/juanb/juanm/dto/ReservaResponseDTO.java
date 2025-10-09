@@ -11,7 +11,6 @@ public record ReservaResponseDTO(
         LocalTime hora,
         int numeroPersonas,
         String cedulaUsuario,
-        UUID idMesa,
-        UUID idEstadoMesa,
+        int numeroMesa,
         String nombreEstado
 ) {}

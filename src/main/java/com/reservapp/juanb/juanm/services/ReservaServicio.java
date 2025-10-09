@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -17,7 +16,6 @@ import com.reservapp.juanb.juanm.dto.ReservaRequestDTO;
 import com.reservapp.juanb.juanm.dto.ReservaResponseDTO;
 import com.reservapp.juanb.juanm.entities.Estado;
 import com.reservapp.juanb.juanm.entities.Mesa;
-import com.reservapp.juanb.juanm.entities.Pago;
 import com.reservapp.juanb.juanm.entities.Reserva;
 import com.reservapp.juanb.juanm.entities.Usuario;
 import com.reservapp.juanb.juanm.exceptions.BadRequestException;
@@ -25,7 +23,6 @@ import com.reservapp.juanb.juanm.exceptions.ResourceNotFoundException;
 import com.reservapp.juanb.juanm.mapper.ReservaMapper;
 import com.reservapp.juanb.juanm.repositories.EstadoRepositorio;
 import com.reservapp.juanb.juanm.repositories.MesaRepositorio;
-import com.reservapp.juanb.juanm.repositories.PagoRepositorio;
 import com.reservapp.juanb.juanm.repositories.ReservaRepositorio;
 import com.reservapp.juanb.juanm.repositories.UsuarioRepositorio;
 
@@ -39,7 +36,6 @@ public class ReservaServicio {
     private final ReservaMapper reservaMapper;
     private final EmailServicio emailServicio;
     private final NotificacionServicio notificacionServicio;
-    private final PagoRepositorio pagoRepositorio;
 
     public ReservaServicio(
             ReservaRepositorio reservaRepositorio,
@@ -48,8 +44,7 @@ public class ReservaServicio {
             EstadoRepositorio estadoRepositorio,
             ReservaMapper reservaMapper,
             EmailServicio emailServicio, 
-            NotificacionServicio notificacionServicio,
-            PagoRepositorio pagoRepositorio
+            NotificacionServicio notificacionServicio
     ) {
         this.reservaRepositorio = reservaRepositorio;
         this.usuarioRepositorio = usuarioRepositorio;
@@ -58,7 +53,6 @@ public class ReservaServicio {
         this.reservaMapper = reservaMapper;
         this.emailServicio = emailServicio; 
         this.notificacionServicio = notificacionServicio;
-        this.pagoRepositorio = pagoRepositorio;
     }
 
     public List<ReservaResponseDTO> findAll() {
@@ -73,150 +67,149 @@ public class ReservaServicio {
                 .orElseThrow(() -> new ResourceNotFoundException("Reserva no encontrada con ID: " + uuid));
         return reservaMapper.toResponseDTO(reserva);
     }
-
+    // Crear una reserva
     public ReservaResponseDTO save(ReservaRequestDTO dto) {
         try {
 
-            //Validaciones de Negocio
+            // Validar fecha y hora
+            validarFechaYHora(dto.fecha(), dto.hora());
 
             Usuario usuario = usuarioRepositorio.findById(dto.cedulaUsuario())
                     .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
-            Mesa mesa = mesaRepositorio.findById(dto.idMesa())
-                    .orElseThrow(() -> new ResourceNotFoundException("Mesa no encontrada"));
+            // Buscar mesas con capacidad suficiente
+            List<Mesa> mesasAdecuadas = mesaRepositorio.findByCapacidadGreaterThanEqual(dto.numeroPersonas());
 
-            Estado estado = estadoRepositorio.findById(dto.idEstado())
-                    .orElseThrow(() -> new ResourceNotFoundException("Estado no encontrado"));
+            // Filtrar por mesas disponibles y libres en el horario solicitado
+            Mesa mesaSeleccionada = mesasAdecuadas.stream()
+                    .filter(m -> m.getEstado().getNombre().equalsIgnoreCase("Disponible"))
+                    .filter(m -> isMesaDisponible(m, dto.fecha(), dto.hora()))
+                    .findFirst()
+                    .orElseThrow(() -> new BadRequestException("No hay mesas disponibles con capacidad suficiente y horario libre"));
 
-            Reserva reserva = reservaMapper.fromRequestDTO(dto, usuario, mesa, estado);
+            // Cambiar estado de la mesa a "Ocupada"
+            Estado estadoOcupada = estadoRepositorio.findByNombre("Ocupada")
+                    .orElseThrow(() -> new ResourceNotFoundException("Estado 'Ocupada' no encontrado"));
+            mesaSeleccionada.setEstado(estadoOcupada);
+            mesaRepositorio.save(mesaSeleccionada);
 
-            if (exceedsCapacity(reserva)) {
-                throw new BadRequestException("El número de personas excede la capacidad de la mesa");
-            }
-            if (!isMesaDisponible(mesa, reserva.getFecha(), reserva.getHora())) {
-                throw new BadRequestException("La mesa ya tiene una reserva en ese horario");
-            } 
+            // Estado de reserva "Confirmada"
+            Estado estadoConfirmada = estadoRepositorio.findByNombre("Confirmada")
+                    .orElseThrow(() -> new ResourceNotFoundException("Estado 'Confirmada' no encontrado"));
 
+            // Crear entidad
+            Reserva reserva = reservaMapper.fromRequestDTO(dto, usuario, mesaSeleccionada, estadoConfirmada);
+
+            // Guardar
             Reserva guardada = reservaRepositorio.save(reserva);
 
-            try {
+            // Notificación
+            enviarNotificacionReserva(guardada, "confirmada");
 
-                //Crea el cuerpo de la notificación y llama al método que la envia
-
-                int numeroMesa = guardada.getMesa().getNumeroMesa();
-                Optional<Pago> pagoOpt = pagoRepositorio.findByReserva(guardada);
-                double monto = pagoOpt.map(Pago::getMonto).orElse(0.0);
-
-                String asunto = "¡Reserva Confirmada!";
-                String cuerpo = String.format(
-                    "Hola %s,\n\nTu reserva ha sido confirmada con los siguientes detalles:\n" +
-                    "- Fecha: %s\n" +
-                    "- Hora: %s\n" +
-                    "- Mesa N°: %d\n" +
-                    "- Monto: $%.2f\n\n" +
-                    "¡Te esperamos!",
-                    guardada.getUsuario().getNombre(),
-                    guardada.getFecha(),
-                    guardada.getHora(),
-                    numeroMesa,
-                    monto
-                );
-                
-                emailServicio.enviarNotificacionSimple(guardada.getUsuario().getCorreo(), asunto, cuerpo);
-                notificacionServicio.registrarNotificacion(guardada, "Confirmación", cuerpo);
-
-            } catch (Exception e) {
-                System.err.println("La reserva se guardó, pero falló el envío de la notificación: " + e.getMessage());
-            }
-            
             return reservaMapper.toResponseDTO(guardada);
+
         } catch (DataAccessException e) {
             throw new BadRequestException("Error al guardar la reserva: " + e.getMessage());
         }
     }
 
     public ReservaResponseDTO update(UUID uuid, ReservaRequestDTO dto) {
-        if (!reservaRepositorio.existsById(uuid)) {
-            throw new ResourceNotFoundException("Reserva no encontrada con ID: " + uuid);
+
+        // Validar fecha y hora
+        validarFechaYHora(dto.fecha(), dto.hora());
+
+        Reserva reservaExistente = reservaRepositorio.findById(uuid)
+                .orElseThrow(() -> new ResourceNotFoundException("Reserva no encontrada con ID: " + uuid));
+
+        reservaExistente.setFecha(dto.fecha());
+        reservaExistente.setHora(dto.hora());
+        reservaExistente.setNumeroPersonas(dto.numeroPersonas());
+
+        Mesa mesaActual = reservaExistente.getMesa();
+
+        // Si la mesa actual no tiene capacidad o está ocupada en ese horario
+        if (mesaActual.getCapacidad() < dto.numeroPersonas() || 
+            !isMesaDisponible(mesaActual, dto.fecha(), dto.hora())) {
+
+            // Liberar mesa actual
+            Estado estadoDisponible = estadoRepositorio.findByNombre("Disponible")
+                    .orElseThrow(() -> new ResourceNotFoundException("Estado 'Disponible' no encontrado"));
+            mesaActual.setEstado(estadoDisponible);
+            mesaRepositorio.save(mesaActual);
+
+            // Buscar nueva mesa adecuada
+            List<Mesa> mesasAdecuadas = mesaRepositorio.findByCapacidadGreaterThanEqual(dto.numeroPersonas());
+            Mesa nuevaMesa = mesasAdecuadas.stream()
+                    .filter(m -> m.getEstado().getNombre().equalsIgnoreCase("Disponible"))
+                    .filter(m -> isMesaDisponible(m, dto.fecha(), dto.hora()))
+                    .findFirst()
+                    .orElseThrow(() -> new BadRequestException("No hay mesas disponibles con capacidad suficiente y horario libre"));
+
+            // Ocupamos la nueva mesa
+            Estado estadoOcupada = estadoRepositorio.findByNombre("Ocupada")
+                    .orElseThrow(() -> new ResourceNotFoundException("Estado 'Ocupada' no encontrado"));
+            nuevaMesa.setEstado(estadoOcupada);
+            mesaRepositorio.save(nuevaMesa);
+
+            reservaExistente.setMesa(nuevaMesa);
         }
 
-        Usuario usuario = usuarioRepositorio.findById(dto.cedulaUsuario())
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+        Reserva actualizada = reservaRepositorio.save(reservaExistente);
 
-        Mesa mesa = mesaRepositorio.findById(dto.idMesa())
-                .orElseThrow(() -> new ResourceNotFoundException("Mesa no encontrada"));
+        // Notificación
+        enviarNotificacionReserva(actualizada, "actualizada");
 
-        Estado estado = estadoRepositorio.findById(dto.idEstado())
-                .orElseThrow(() -> new ResourceNotFoundException("Estado no encontrado"));
-
-        Reserva reserva = reservaMapper.fromRequestDTO(dto, usuario, mesa, estado);
-        reserva.setIdReserva(uuid); 
-
-        if (exceedsCapacity(reserva)) {
-            throw new BadRequestException("El número de personas excede la capacidad de la mesa");
-        }
-
-        Reserva actualizada = reservaRepositorio.save(reserva);
         return reservaMapper.toResponseDTO(actualizada);
     }
 
     //Cancelar una reserva
 
-    public void cancelarReserva(UUID uuid) {
-
+    public ReservaResponseDTO cancel(UUID uuid) {
         Reserva reserva = reservaRepositorio.findById(uuid)
-            .orElseThrow(() -> new ResourceNotFoundException("Reserva no encontrada con ID: " + uuid));
-            
-        Estado estadoCancelado = estadoRepositorio.findByNombre("Cancelada")
-            .orElseThrow(() -> new IllegalStateException("El estado 'Cancelada' no se encuentra en la base de datos."));
+                .orElseThrow(() -> new ResourceNotFoundException("Reserva no encontrada con ID: " + uuid));
 
-        //Cambia el estado de la reserva a cancelado
-        reserva.setEstado(estadoCancelado);
-        reservaRepositorio.save(reserva);
+        Estado estadoCancelada = estadoRepositorio.findByNombre("Cancelada")
+                .orElseThrow(() -> new ResourceNotFoundException("Estado 'Cancelada' no encontrado"));
+        reserva.setEstado(estadoCancelada);
 
-        //Crea el cuerpo de la notificación de cancelación
-        try {
-            int numeroMesa = reserva.getMesa().getNumeroMesa();
-            double monto = pagoRepositorio.findByReserva(reserva).map(Pago::getMonto).orElse(0.0);
+        // Liberar mesa
+        Mesa mesa = reserva.getMesa();
+        Estado estadoDisponible = estadoRepositorio.findByNombre("Disponible")
+                .orElseThrow(() -> new ResourceNotFoundException("Estado 'Disponible' no encontrado"));
+        mesa.setEstado(estadoDisponible);
+        mesaRepositorio.save(mesa);
 
-            String asunto = "Su Reserva ha sido cancelada";
-            String cuerpo = String.format(
-                "Hola %s,\n\nSu reserva con los siguientes detalles ha sido cancelada:\n" +
-                "- Fecha: %s\n" +
-                "- Hora: %s\n" +
-                "- Mesa N°: %d\n" +
-                "- Monto: $%.2f",
-                reserva.getUsuario().getNombre(),
-                reserva.getFecha(),
-                reserva.getHora(),
-                numeroMesa,
-                monto
-            );
+        Reserva cancelada = reservaRepositorio.save(reserva);
 
-            emailServicio.enviarNotificacionSimple(reserva.getUsuario().getCorreo(), asunto, cuerpo);
-            notificacionServicio.registrarNotificacion(reserva, "Cancelación", cuerpo);
-            
-        } catch (Exception e) {
+        // Notificación
+        enviarNotificacionReserva(cancelada, "cancelada");
 
-            System.err.println("La reserva se canceló, pero falló el envío de la notificación: " + e.getMessage());
-        }
+        return reservaMapper.toResponseDTO(cancelada);
     }
 
-    public void delete(UUID uuid) {
-        try {
-            if (!reservaRepositorio.existsById(uuid)) {
-                throw new ResourceNotFoundException("Reserva no encontrada con ID: " + uuid);
-            }
-            reservaRepositorio.deleteById(uuid);
-        } catch (DataAccessException e) {
-            throw new BadRequestException("Error al eliminar la reserva: " + e.getMessage());
-        }
-    }
+    public ReservaResponseDTO delete(UUID uuid) {
+        Reserva reserva = reservaRepositorio.findById(uuid)
+                .orElseThrow(() -> new ResourceNotFoundException("Reserva no encontrada con ID: " + uuid));
 
-    //Validación de capacidad de personas en la mesa
-    public boolean exceedsCapacity(Reserva reserva) {
-        return reserva.getMesa() != null &&
-                reserva.getNumeroPersonas() > reserva.getMesa().getCapacidad();
+        // Cambiar estado de la reserva a "Cancelada"
+        Estado estadoCancelada = estadoRepositorio.findByNombre("Cancelada")
+                .orElseThrow(() -> new ResourceNotFoundException("Estado 'Cancelada' no encontrado"));
+        reserva.setEstado(estadoCancelada);
+
+        // Liberar la mesa
+        Mesa mesa = reserva.getMesa();
+        Estado estadoDisponible = estadoRepositorio.findByNombre("Disponible")
+                .orElseThrow(() -> new ResourceNotFoundException("Estado 'Disponible' no encontrado"));
+        mesa.setEstado(estadoDisponible);
+        mesaRepositorio.save(mesa);
+
+        // Guardar los cambios en la reserva
+        Reserva cancelada = reservaRepositorio.save(reserva);
+
+        // Notificar al usuario
+        enviarNotificacionReserva(cancelada, "cancelada");
+
+        return reservaMapper.toResponseDTO(cancelada);
     }
 
     //Validar si la mesa está libre ese día (RF20)
@@ -273,4 +266,69 @@ public class ReservaServicio {
         return horasFaltantes;
     }
 
+    //  Notificaciones por email
+    private void enviarNotificacionReserva(Reserva reserva, String tipo) {
+        try {
+            String asunto;
+            String cuerpo;
+            int numeroMesa = reserva.getMesa().getNumeroMesa();
+
+            switch (tipo.toLowerCase()) {
+                case "confirmada" -> {
+                    asunto = "¡Reserva Confirmada!";
+                    cuerpo = String.format(
+                        "Hola %s,\n\nTu reserva ha sido confirmada:\n" +
+                        "- Fecha: %s\n- Hora: %s\n- Mesa N°: %d\n\n¡Te esperamos!",
+                        reserva.getUsuario().getNombre(),
+                        reserva.getFecha(),
+                        reserva.getHora(),
+                        numeroMesa
+                    );
+                }
+                case "actualizada" -> {
+                    asunto = "Reserva Actualizada";
+                    cuerpo = String.format(
+                        "Hola %s,\n\nTu reserva ha sido actualizada:\n" +
+                        "- Fecha: %s\n- Hora: %s\n- Mesa N°: %d\n\n¡Gracias por actualizar tu reserva!",
+                        reserva.getUsuario().getNombre(),
+                        reserva.getFecha(),
+                        reserva.getHora(),
+                        numeroMesa
+                    );
+                }
+                case "cancelada" -> {
+                    asunto = "Reserva Cancelada";
+                    cuerpo = String.format(
+                        "Hola %s,\n\nTu reserva ha sido cancelada:\n" +
+                        "- Fecha: %s\n- Hora: %s\n\nEsperamos verte pronto.",
+                        reserva.getUsuario().getNombre(),
+                        reserva.getFecha(),
+                        reserva.getHora()
+                    );
+                }
+                default -> { return; }
+            }
+
+            emailServicio.enviarNotificacionSimple(reserva.getUsuario().getCorreo(), asunto, cuerpo);
+            notificacionServicio.registrarNotificacion(reserva, tipo, cuerpo);
+        } catch (Exception e) {
+            System.err.println("Notificación de " + tipo + " falló: " + e.getMessage());
+        }
+    }
+
+    // Validar fecha y hora de reserva
+    private void validarFechaYHora(LocalDate fecha, LocalTime hora) {
+        LocalDate hoy = LocalDate.now();
+
+        if (fecha.isBefore(hoy)) {
+            throw new BadRequestException("No se puede crear una reserva en una fecha pasada.");
+        }
+
+        LocalTime horaApertura = LocalTime.of(10, 0);
+        LocalTime horaCierre = LocalTime.of(22, 0);
+
+        if (hora.isBefore(horaApertura) || hora.isAfter(horaCierre)) {
+            throw new BadRequestException("La hora de la reserva debe estar entre las 10:00 y las 22:00.");
+        }
+    }
 }

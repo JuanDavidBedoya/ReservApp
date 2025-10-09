@@ -21,10 +21,9 @@ public class ReservaMapper {
                 reserva.getFecha(),
                 reserva.getHora(),
                 reserva.getNumeroPersonas(),
-                (reserva.getUsuario() != null) ? reserva.getUsuario().getCedula() : null,
-                (reserva.getMesa() != null) ? reserva.getMesa().getIdMesa() : null,
-                (reserva.getMesa() != null) ? reserva.getMesa().getEstado().getIdEstado() : null,
-                (reserva.getEstado() != null) ? reserva.getEstado().getNombre() : null
+                reserva.getUsuario().getCedula(),
+                reserva.getMesa().getNumeroMesa(),
+                reserva.getEstado().getNombre()
         );
     }
 
