@@ -4,7 +4,6 @@ import { Component } from '@angular/core';
   selector: 'app-pago',
   imports: [],
   templateUrl: './pago.html',
-  styleUrl: './pago.css'
 })
 export class Pago {
 
