@@ -1,0 +1,38 @@
+<section class="min-h-[calc(101.9vh-6rem)] bg-[#ffffff] text-white flex flex-col items-center pt-70">  
+    <div class="max-w-md w-full bg-[#1a1a1a] p-16 rounded-2xl shadow-lg">
+    <h1 class="text-3xl font-bold mb-8 text-center">Mis Reservas</h1>
+
+    <div class="w-full max-w-4xl space-y-4">
+        @for (reserva of reservas; track reserva.id) {
+        <div
+            class="flex justify-between items-center bg-neutral-900 p-4 rounded-2xl shadow-md hover:shadow-lg transition-all border border-neutral-800"
+        >
+            <div>
+            <p><strong>ID:</strong> {{ reserva.id }}</p>
+            <p><strong>Fecha:</strong> {{ reserva.fecha }}</p>
+            <p><strong>Hora:</strong> {{ reserva.hora }}</p>
+            <p><strong>Personas:</strong> {{ reserva.personas }}</p>
+            <p><strong>Estado:</strong>
+                <span
+                [ngClass]="{
+                    'text-green-400': reserva.estado === 'Confirmada',
+                    'text-blue-400': reserva.estado === 'Pagada',
+                    'text-yellow-400': reserva.estado === 'Pendiente'
+                }"
+                >
+                {{ reserva.estado }}
+                </span>
+            </p>
+            </div>
+
+            <button
+            (click)="verReserva(reserva.id)"
+            class="bg-[#ffffff] hover:bg-[#4e4e4e] text-black font-semibold py-2 px-4 rounded-lg transition-all"
+            >
+            Ver reserva
+            </button>
+        </div>
+        }
+    </div>
+    </div>
+</section>  
