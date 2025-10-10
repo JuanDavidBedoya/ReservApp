@@ -1,14 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-
-interface Reserva {
-  id: string;
-  fecha: string;
-  hora: string;
-  personas: number;
-  estado: 'Confirmada' | 'Pendiente' | 'Pagada' | 'Cancelada';
-}
+import { ReservaService } from '../../services/reserva-service';
+import { ReservaDTO } from '../../interfaces/reservaDTO';
 
 @Component({
   selector: 'app-usuario-reserva',
@@ -16,19 +10,38 @@ interface Reserva {
   templateUrl: './usuario-reserva.html',
 })
 export class UsuarioReservas implements OnInit {
-  reservas: Reserva[] = [];
+  reservas: ReservaDTO[] = [];
+  loading = true;
+  error = false;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private reservaService: ReservaService) {}
 
   ngOnInit() {
-    this.reservas = [
-      { id: 'R001', fecha: '2025-10-15', hora: '19:00', personas: 4, estado: 'Confirmada' },
-      { id: 'R002', fecha: '2025-10-20', hora: '20:30', personas: 2, estado: 'Pendiente' },
-      { id: 'R003', fecha: '2025-10-25', hora: '18:00', personas: 5, estado: 'Pagada' },
-    ];
+    const userData = localStorage.getItem('usuario');
+    if (!userData) {
+      this.error = true;
+      this.loading = false;
+      return;
+    }
+
+    const usuario = JSON.parse(userData);
+    const cedula = usuario.cedula || usuario.cedulaUsuario;
+
+    this.reservaService.getReservasPorUsuario(cedula).subscribe({
+      next: (data) => {
+        this.reservas = data;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error al obtener reservas', err);
+        this.error = true;
+        this.loading = false;
+      },
+    });
   }
 
   verReserva(id: string) {
     this.router.navigate(['/detalle-reserva', id]);
   }
 }
+

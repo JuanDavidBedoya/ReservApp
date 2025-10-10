@@ -1,51 +1,45 @@
 
-<div class="absolute top-0 left-0 h-full w-full overflow-hidden bg-black bg-gradient-to-b from-black via-gray-900 to-gray-800"></div>
-
 <div class="relative flex min-h-screen items-center justify-center p-4">
-
   <div class="z-10 w-full max-w-4xl rounded-2xl bg-neutral-900 p-8 shadow-lg border border-neutral-800">
     <h1 class="text-3xl font-bold mb-8 text-center text-white">Mis Reservas</h1>
 
-    <!-- Contenedor de la lista de reservas -->
-    <div class="w-full space-y-4">
-      @for (reserva of reservas; track reserva.id) {
+    <div *ngIf="loading" class="text-center text-gray-400">Cargando reservas...</div>
+    <div *ngIf="error" class="text-center text-red-400">Error al cargar tus reservas</div>
+    <div *ngIf="!loading && !error && reservas.length === 0" class="text-center text-gray-400">
+      No tienes reservas registradas.
+    </div>
+
+    <div *ngIf="!loading && !error && reservas.length > 0" class="w-full space-y-4">
       <div
+        *ngFor="let reserva of reservas"
         class="flex flex-col sm:flex-row justify-between items-center bg-neutral-800 p-4 rounded-xl shadow-md hover:bg-neutral-700 transition-all border border-neutral-700"
       >
-        <!-- Detalles de la reserva -->
         <div class="text-sm text-gray-300">
-          <p><strong>ID:</strong> {{ reserva.id }}</p>
+          <p><strong>ID:</strong> {{ reserva.idReserva }}</p>
           <p><strong>Fecha:</strong> {{ reserva.fecha }}</p>
           <p><strong>Hora:</strong> {{ reserva.hora }}</p>
-          <p><strong>Personas:</strong> {{ reserva.personas }}</p>
+          <p><strong>Personas:</strong> {{ reserva.numeroPersonas }}</p>
           <p><strong>Estado:</strong>
             <span
               [ngClass]="{
-                'text-green-400': reserva.estado === 'Confirmada',
-                'text-blue-400': reserva.estado === 'Pagada',
-                'text-yellow-400': reserva.estado === 'Pendiente',
-                'text-red-400': reserva.estado === 'Cancelada'
+                'text-green-400': reserva.nombreEstado === 'Confirmada',
+                'text-blue-400': reserva.nombreEstado === 'Pagada',
+                'text-yellow-400': reserva.nombreEstado === 'Pendiente',
+                'text-red-400': reserva.nombreEstado === 'Cancelada'
               }"
             >
-              {{ reserva.estado }}
+              {{ reserva.nombreEstado }}
             </span>
           </p>
         </div>
 
-        <!-- Botón de acción -->
         <button
-          (click)="verReserva(reserva.id)"
+          (click)="verReserva(reserva.idReserva)"
           class="mt-4 sm:mt-0 bg-white hover:bg-gray-200 text-black font-semibold py-2 px-4 rounded-lg transition-all"
         >
           Ver reserva
         </button>
       </div>
-      }
     </div>
   </div>
 </div>
-
-<!-- Onda SVG decorativa en la parte inferior -->
-<svg class="absolute bottom-0 left-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
-    <path fill="#fff" fill-opacity="1" d="M0,0L40,42.7C80,85,160,171,240,197.3C320,224,400,192,480,154.7C560,117,640,75,720,74.7C800,75,880,117,960,154.7C1040,192,1120,224,1200,213.3C1280,203,1360,149,1400,122.7L1440,96L1440,320L1400,320C1360,320,1280,320,1200,320C1120,320,1040,320,960,320C880,320,800,320,720,320C640,320,560,320,480,320C400,320,320,320,240,320C160,320,80,320,40,320L0,320Z"></path>
-</svg>

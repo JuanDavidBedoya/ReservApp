@@ -26,7 +26,7 @@
             <label class="mb-1 block text-sm text-gray-400">Cédula</label>
             <input
               type="text"
-              [(ngModel)]="reservaData.cedula"
+              [(ngModel)]="reservaData.cedulaUsuario"
               name="cedula"
               (ngModelChange)="onChange()"
               class="w-full appearance-none rounded border border-[#4e4e4e] bg-[#0d0d0d] p-2 outline-none focus:border-[#ffffff]">
@@ -37,7 +37,7 @@
             <input
               type="number"
               min="1"
-              [(ngModel)]="reservaData.personas"
+              [(ngModel)]="reservaData.numeroPersonas"
               name="personas"
               (ngModelChange)="onChange()"
               class="w-full rounded border border-[#4e4e4e] bg-[#0d0d0d] p-2 outline-none focus:border-[#ffffff]">
