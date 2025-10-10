@@ -23,6 +23,6 @@ public interface UsuarioRepositorio extends JpaRepository<Usuario, String>{
 
     Optional<Rol> findByNombre(String nombre);
 
-    
+    Optional<Usuario> findByCedula(String cedula);
 
 }
