@@ -1,13 +1,19 @@
 <header class="bg-[#0d0d0d] shadow-md fixed top-0 left-0 w-full z-50">
   <div class="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
-    <div class="text-2xl font-bold text-[#ffffff]">ReservApp</div>
+    <div class="text-2xl font-bold text-white">ReservApp</div>
 
-    <nav class="hidden md:flex space-x-8 text-white font-medium">
+    <nav class="hidden md:flex items-center space-x-6 text-white font-medium">
       @if (!isInicio()) {
         <a href="#" class="hover:text-[#4e4e4e] transition">Inicio</a>
       }
-      <a href="/login" class="hover:text-[#4e4e4e] transition">Iniciar Sesión</a>
-      <a href="/registro" class="hover:text-[#4e4e4e] transition">Registrarse</a>
+      <a href="/login" class="hover:text-gray-400 transition">Iniciar Sesión</a>
+      <a href="/registro" class="hover:text-gray-400 transition">Registrarse</a>
+
+      <button 
+        (click)="logout()" 
+        class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition">
+        Cerrar Sesión
+      </button>
     </nav>
   </div>
 </header>

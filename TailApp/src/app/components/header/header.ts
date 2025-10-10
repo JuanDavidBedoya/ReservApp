@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-header',
@@ -7,10 +8,13 @@ import { Router, RouterModule } from '@angular/router';
   imports: [RouterModule]
 })
 export class Header {
+  constructor(private authService: AuthService, private router: Router) { }
 
-  constructor(private router: Router) {}
-  
-   isInicio(): boolean {
+  logout(): void {
+    this.authService.logout();
+  }
+
+  isInicio(): boolean {
     return this.router.url === '/' || this.router.url === '/inicio';
   }
 }

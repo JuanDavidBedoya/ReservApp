@@ -23,7 +23,7 @@
       
       <div class="space-y-6">
         <div>
-          <input 
+          <input [(ngModel)]="cedula"
             type="text" 
             placeholder="Cédula" 
             name="cedula"
@@ -32,7 +32,7 @@
         </div>
 
         <div>
-          <input 
+          <input [(ngModel)]="contrasena"
             type="password" 
             placeholder="Contraseña" 
             name="password"
@@ -47,7 +47,7 @@
         </div>
 
         <div>
-          <button type="button" class="w-full cursor-pointer justify-center rounded-lg bg-gray-800 p-3 font-semibold tracking-wide text-gray-100 transition duration-500 ease-in hover:bg-black">
+          <button (click) = "login()" type="button" class="w-full cursor-pointer justify-center rounded-lg bg-gray-800 p-3 font-semibold tracking-wide text-gray-100 transition duration-500 ease-in hover:bg-black">
             Iniciar Sesión
           </button>
         </div>
