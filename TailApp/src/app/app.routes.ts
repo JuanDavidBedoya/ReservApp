@@ -6,7 +6,7 @@ import { Comentarios } from './pages/comentario/comentario';
 import { Pago } from './pages/pago/pago';
 import { PasarelaPago } from './pages/pasarela-pago/pasarela-pago';
 import { UsuarioReservas } from './usuario-reserva/usuario-reserva';
-import { DetalleReserva } from './detalle-reserva/detalle-reserva';
+import { DetalleReserva } from './pages/detalle-reserva/detalle-reserva';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'inicio', pathMatch: 'full' },
