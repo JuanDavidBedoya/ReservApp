@@ -6,8 +6,9 @@ import { Comentarios } from './pages/comentario/comentario';
 import { Login } from './pages/login/login';
 import { Pago } from './pages/pago/pago';
 import { PasarelaPago } from './pages/pasarela-pago/pasarela-pago';
-import { UsuarioReservas } from './usuario-reserva/usuario-reserva';
 import { DetalleReserva } from './pages/detalle-reserva/detalle-reserva';
+import { Registro } from './pages/registro/registro';
+import { UsuarioReservas } from './pages/usuario-reserva/usuario-reserva';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'inicio', pathMatch: 'full' },
@@ -20,5 +21,7 @@ export const routes: Routes = [
   { path: 'login', component: Login},
   { path: 'usuario-reserva', component: UsuarioReservas },
   { path: 'detalle-reserva/:id', component: DetalleReserva },
+  { path: 'registro', component: Registro },
   { path: '**', redirectTo: 'inicio' }
+
 ];

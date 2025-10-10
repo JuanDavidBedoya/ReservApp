@@ -1,58 +1,61 @@
-<section class="min-h-[calc(101.9vh-6rem)] bg-[#ffffff] text-white flex flex-col items-center pt-80">
-  <div class="max-w-md w-full bg-[#1a1a1a] p-8 rounded-2xl shadow-lg">
-    <h2 class="text-2xl font-bold text-[#ffffff] mb-6 text-center">
+<div class="absolute top-0 left-0 h-full w-full overflow-hidden bg-black bg-gradient-to-b from-black via-gray-900 to-gray-800"></div>
+
+<div class="relative flex min-h-screen items-center justify-center p-4">
+
+  <div class="z-10 w-full max-w-md rounded-2xl bg-[#1a1a1a] p-8 shadow-lg">
+    <h2 class="mb-6 text-center text-2xl font-bold text-[#ffffff]">
       Pasarela de Pago - {{ metodoPago }}
     </h2>
 
     <form [formGroup]="paymentForm" (ngSubmit)="pagar()" class="space-y-4">
       <div>
-        <label class="block mb-1 text-sm text-gray-400">Nombre del Titular</label>
+        <label class="mb-1 block text-sm text-gray-400">Nombre del Titular</label>
         <input
           type="text"
           formControlName="nombre"
           placeholder="Ej: Juan Pérez"
-          class="w-full p-2 rounded bg-[#0d0d0d] border border-[#4e4e4e] text-white placeholder-gray-500 focus:border-[#ffffff] outline-none"
+          class="w-full rounded border border-[#4e4e4e] bg-[#0d0d0d] p-2 text-white placeholder-gray-500 outline-none focus:border-[#ffffff]"
         />
       </div>
 
       <div>
-        <label class="block mb-1 text-sm text-gray-400">Número de Tarjeta</label>
+        <label class="mb-1 block text-sm text-gray-400">Número de Tarjeta</label>
         <input
           type="text"
           maxlength="16"
           formControlName="numeroTarjeta"
           placeholder="1234 5678 9012 3456"
-          class="w-full p-2 rounded bg-[#0d0d0d] border border-[#4e4e4e] text-white placeholder-gray-500 focus:border-[#ffffff] outline-none"
+          class="w-full rounded border border-[#4e4e4e] bg-[#0d0d0d] p-2 text-white placeholder-gray-500 outline-none focus:border-[#ffffff]"
         />
       </div>
 
       <div class="grid grid-cols-2 gap-4">
         <div>
-          <label class="block mb-1 text-sm text-gray-400">Expiración (MM/AA)</label>
+          <label class="mb-1 block text-sm text-gray-400">Expiración (MM/AA)</label>
           <input
             type="text"
             formControlName="expiracion"
             placeholder="08/27"
-            class="w-full p-2 rounded bg-[#0d0d0d] border border-[#4e4e4e] text-white placeholder-gray-500 focus:border-[#ffffff] outline-none"
+            class="w-full rounded border border-[#4e4e4e] bg-[#0d0d0d] p-2 text-white placeholder-gray-500 outline-none focus:border-[#ffffff]"
           />
         </div>
 
         <div>
-          <label class="block mb-1 text-sm text-gray-400">CVV</label>
+          <label class="mb-1 block text-sm text-gray-400">CVV</label>
           <input
             type="text"
             maxlength="4"
             formControlName="cvv"
             placeholder="123"
-            class="w-full p-2 rounded bg-[#0d0d0d] border border-[#4e4e4e] text-white placeholder-gray-500 focus:border-[#ffffff] outline-none"
+            class="w-full rounded border border-[#4e4e4e] bg-[#0d0d0d] p-2 text-white placeholder-gray-500 outline-none focus:border-[#ffffff]"
           />
         </div>
       </div>
 
-      <div class="flex justify-center space-x-4 mt-6">
+      <div class="mt-6 flex justify-center space-x-4">
         <button
           type="submit"
-          class="px-6 py-3 bg-[#ffffff] hover:bg-[#4e4e4e] text-[#0d0d0d] font-semibold rounded-lg shadow-md transition"
+          class="rounded-lg bg-white px-6 py-3 font-semibold text-[#0d0d0d] shadow-md transition hover:bg-gray-200"
         >
           Confirmar Pago
         </button>
@@ -60,11 +63,16 @@
         <button
           type="button"
           (click)="cancelar()"
-          class="px-6 py-3 bg-[#4e4e4e] hover:bg-[#2e2e2e] text-white font-semibold rounded-lg shadow-md transition"
+          class="rounded-lg bg-[#4e4e4e] px-6 py-3 font-semibold text-white shadow-md transition hover:bg-[#2e2e2e]"
         >
           Cancelar
         </button>
       </div>
     </form>
   </div>
-</section>
+</div>
+
+<!-- Onda SVG decorativa en la parte inferior -->
+<svg class="absolute bottom-0 left-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+    <path fill="#fff" fill-opacity="1" d="M0,0L40,42.7C80,85,160,171,240,197.3C320,224,400,192,480,154.7C560,117,640,75,720,74.7C800,75,880,117,960,154.7C1040,192,1120,224,1200,213.3C1280,203,1360,149,1400,122.7L1440,96L1440,320L1400,320C1360,320,1280,320,1200,320C1120,320,1040,320,960,320C880,320,800,320,720,320C640,320,560,320,480,320C400,320,320,320,240,320C160,320,80,320,40,320L0,320Z"></path>
+</svg>

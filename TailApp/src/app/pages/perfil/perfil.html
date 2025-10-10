@@ -1,57 +1,61 @@
-<section class="min-h-[calc(101.9vh-6rem)] bg-[#ffffff] text-white flex flex-col items-center pt-64">
-  <div class="max-w-7xl w-full grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="absolute top-0 left-0 h-full w-full overflow-hidden bg-black bg-gradient-to-b from-black via-gray-900 to-gray-800"></div>
 
-    <!-- Card izquierda -->
-    <div class="bg-[#1a1a1a] p-32 rounded-2xl shadow-lg flex flex-col items-center">
+<div class="relative flex min-h-screen items-center justify-center p-4">
+
+  <!-- Contenido principal (grid de dos columnas), posicionado sobre el fondo con z-10 -->
+  <div class="z-10 grid w-full max-w-7xl grid-cols-1 gap-8 md:grid-cols-3">
+
+    <!-- Card izquierda (Perfil) -->
+    <div class="flex flex-col items-center rounded-2xl bg-[#1a1a1a] p-20 shadow-lg">
       <!-- Imagen de perfil -->
-      <div class="w-40 h-40 rounded-full bg-[#4e4e4e] flex items-center justify-center text-white text-lg font-semibold mb-4">
+      <div class="mb-4 flex h-40 w-40 items-center justify-center rounded-full bg-[#4e4e4e] text-lg font-semibold text-white">
         Foto
       </div>
 
       <!-- Datos del usuario -->
-      <div class="text-center space-y-2">
-        <h2 class="text-2xl font-bold text-[#ffffff]">{{ user.nombre }}</h2>
+      <div class="space-y-2 text-center">
+        <h2 class="text-2xl font-bold text-white">{{ user.nombre }}</h2>
         <p class="text-gray-300">{{ user.correo }}</p>
         <p class="text-gray-400">{{ user.telefono }}</p>
       </div>
     </div>
 
-    <!-- Card derecha -->
-    <div class="md:col-span-2 bg-[#1a1a1a] p-32 rounded-2xl shadow-lg">
-      <h2 class="text-2xl font-bold text-[#ffffff] mb-6">Actualizar Datos</h2>
+    <!-- Card derecha (Formulario de actualización) -->
+    <div class="rounded-2xl bg-[#1a1a1a] p-8 shadow-lg md:col-span-2">
+      <h2 class="mb-6 text-2xl font-bold text-white">Actualizar Datos</h2>
 
       <form class="space-y-4" (ngSubmit)="actualizarDatos()">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
-            <label class="block mb-1 text-sm text-gray-400">Nombre</label>
-            <input type="text" [(ngModel)]="formData.nombre" name="nombre" class="w-full p-2 rounded bg-[#0d0d0d] border border-[#4e4e4e] focus:border-[#ffffff] outline-none">
+            <label class="mb-1 block text-sm text-gray-400">Nombre</label>
+            <input type="text" [(ngModel)]="formData.nombre" name="nombre" class="w-full rounded border border-[#4e4e4e] bg-[#0d0d0d] p-2 text-white outline-none focus:border-[#ffffff]">
           </div>
 
           <div>
-            <label class="block mb-1 text-sm text-gray-400">Correo</label>
-            <input type="email" [(ngModel)]="formData.correo" name="correo" class="w-full p-2 rounded bg-[#0d0d0d] border border-[#4e4e4e] focus:border-[#ffffff] outline-none">
+            <label class="mb-1 block text-sm text-gray-400">Correo</label>
+            <input type="email" [(ngModel)]="formData.correo" name="correo" class="w-full rounded border border-[#4e4e4e] bg-[#0d0d0d] p-2 text-white outline-none focus:border-[#ffffff]">
           </div>
 
           <div>
-            <label class="block mb-1 text-sm text-gray-400">Contraseña</label>
-            <input type="password" [(ngModel)]="formData.password" name="password" class="w-full p-2 rounded bg-[#0d0d0d] border border-[#4e4e4e] focus:border-[#ffffff] outline-none">
+            <label class="mb-1 block text-sm text-gray-400">Contraseña</label>
+            <input type="password" [(ngModel)]="formData.password" name="password" class="w-full rounded border border-[#4e4e4e] bg-[#0d0d0d] p-2 text-white outline-none focus:border-[#ffffff]">
           </div>
 
           <div>
-            <label class="block mb-1 text-sm text-gray-400">Verificar Contraseña</label>
-            <input type="password" [(ngModel)]="formData.confirmarPassword" name="confirmarPassword" class="w-full p-2 rounded bg-[#0d0d0d] border border-[#4e4e4e] focus:border-[#ffffff] outline-none">
+            <label class="mb-1 block text-sm text-gray-400">Verificar Contraseña</label>
+            <input type="password" [(ngModel)]="formData.confirmarPassword" name="confirmarPassword" class="w-full rounded border border-[#4e4e4e] bg-[#0d0d0d] p-2 text-white outline-none focus:border-[#ffffff]">
           </div>
 
           <div class="md:col-span-2">
-            <label class="block mb-1 text-sm text-gray-400">Teléfono</label>
-            <input type="tel" [(ngModel)]="formData.telefono" name="telefono" class="w-full p-2 rounded bg-[#0d0d0d] border border-[#4e4e4e] focus:border-[#ffffff] outline-none">
+            <label class="mb-1 block text-sm text-gray-400">Teléfono</label>
+            <input type="tel" [(ngModel)]="formData.telefono" name="telefono" class="w-full rounded border border-[#4e4e4e] bg-[#0d0d0d] p-2 text-white outline-none focus:border-[#ffffff]">
           </div>
         </div>
 
-        <div class="flex justify-center gap-6 mt-8">
+        <div class="mt-8 flex justify-center gap-6">
           <button
             type="submit"
-            class="mt-6 px-6 py-3 bg-[#ffffff] hover:bg-[#4e4e4e] text-[#0d0d0d] font-semibold rounded-lg shadow-md transition">
+            class="mt-6 rounded-lg bg-white px-6 py-3 font-semibold text-[#0d0d0d] shadow-md transition hover:bg-gray-200">
             Actualizar Datos
           </button>
         </div>
@@ -59,4 +63,9 @@
     </div>
 
   </div>
-</section>
+</div>
+
+<!-- Onda SVG decorativa en la parte inferior -->
+<svg class="absolute bottom-0 left-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+    <path fill="#fff" fill-opacity="1" d="M0,0L40,42.7C80,85,160,171,240,197.3C320,224,400,192,480,154.7C560,117,640,75,720,74.7C800,75,880,117,960,154.7C1040,192,1120,224,1200,213.3C1280,203,1360,149,1400,122.7L1440,96L1440,320L1400,320C1360,320,1280,320,1200,320C1120,320,1040,320,960,320C880,320,800,320,720,320C640,320,560,320,480,320C400,320,320,320,240,320C160,320,80,320,40,320L0,320Z"></path>
+</svg>

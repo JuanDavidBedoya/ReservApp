@@ -1,78 +1,81 @@
-<section class="min-h-[calc(101.9vh-6rem)] bg-[#ffffff] text-white flex flex-col items-center pt-64"> <!--footer solucion-->
-    
-  <div class="max-w-7xl w-full grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="absolute top-0 left-0 h-full w-full overflow-hidden bg-black bg-gradient-to-b from-black via-gray-900 to-gray-800"></div>
+
+<div class="relative flex min-h-screen items-center justify-center p-4">
+
+  <!-- Contenido principal, posicionado sobre el fondo con z-10 -->
+  <div class="z-10 grid w-full max-w-7xl grid-cols-1 gap-8 md:grid-cols-3">
 
     <!-- Card calendario -->
-    <div class="bg-[#1a1a1a] p-8 rounded-2xl shadow-lg flex flex-col items-center">
-      <h2 class="text-2xl font-bold text-[#ffffff] mb-4">Selecciona la Fecha</h2>
+    <div class="flex flex-col items-center rounded-2xl bg-[#1a1a1a] p-8 shadow-lg">
+      <h2 class="mb-4 text-2xl font-bold text-white">Selecciona la Fecha</h2>
 
       <input
         type="date"
         [(ngModel)]="reservaData.fecha"
         (ngModelChange)="onChange()"
-        class="p-3 w-full bg-[#0d0d0d] text-white rounded border border-[#4e4e4e] focus:border-[#ffffff] outline-none cursor-pointer ">
-
-        
+        class="w-full cursor-pointer rounded border border-[#4e4e4e] bg-[#0d0d0d] p-3 text-white outline-none focus:border-[#ffffff]"
+      >
     </div>
 
-    <!-- Card formulario -->
-    <div class="md:col-span-2 bg-[#1a1a1a] p-32 rounded-2xl shadow-lg">
-      <h2 class="text-2xl font-bold text-[#ffffff] mb-6">Detalles de la Reserva</h2>
+    <div class="rounded-2xl bg-[#1a1a1a] p-28 shadow-lg md:col-span-2">
+      <h2 class="mb-6 text-2xl font-bold text-white">Detalles de la Reserva</h2>
 
       <form class="space-y-4" (ngSubmit)="realizarReserva()">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
-            <label class="block mb-1 text-sm text-gray-400">Cédula</label>
+            <label class="mb-1 block text-sm text-gray-400">Cédula</label>
             <input
               type="text"
               [(ngModel)]="reservaData.cedula"
               name="cedula"
               (ngModelChange)="onChange()"
-              class="w-full p-2 rounded bg-[#0d0d0d] border border-[#4e4e4e] focus:border-[#ffffff] outline-none appearance-none">
-
-              
+              class="w-full appearance-none rounded border border-[#4e4e4e] bg-[#0d0d0d] p-2 outline-none focus:border-[#ffffff]">
           </div>
 
           <div>
-            <label class="block mb-1 text-sm text-gray-400">Número de Personas</label>
+            <label class="mb-1 block text-sm text-gray-400">Número de Personas</label>
             <input
               type="number"
               min="1"
               [(ngModel)]="reservaData.personas"
               name="personas"
               (ngModelChange)="onChange()"
-              class="w-full p-2 rounded bg-[#0d0d0d] border border-[#4e4e4e] focus:border-[#ffffff] outline-none">
+              class="w-full rounded border border-[#4e4e4e] bg-[#0d0d0d] p-2 outline-none focus:border-[#ffffff]">
           </div>
 
           <div class="md:col-span-2">
-            <label class="block mb-1 text-sm text-gray-400">Hora de la Reserva</label>
+            <label class="mb-1 block text-sm text-gray-400">Hora de la Reserva</label>
             <input
               type="time"
               [(ngModel)]="reservaData.hora"
               name="hora"
               (ngModelChange)="onChange()"
-              class="w-full p-2 rounded bg-[#0d0d0d] border border-[#4e4e4e] focus:border-[#ffffff] outline-none">
+              class="w-full rounded border border-[#4e4e4e] bg-[#0d0d0d] p-2 outline-none focus:border-[#ffffff]">
           </div>
         </div>
 
         <!-- Botones centrados -->
-        <div class="flex justify-center gap-6 mt-8">
+        <div class="mt-8 flex justify-center gap-6">
           <button
             type="submit"
             [disabled]="!formValid"
-            class="px-6 py-3 bg-[#ffffff] hover:bg-[#4e4e4e] disabled:bg-gray-600 disabled:cursor-not-allowed text-[#0d0d0d] font-semibold rounded-lg shadow-md transition">
+            class="rounded-lg bg-white px-6 py-3 font-semibold text-[#0d0d0d] shadow-md transition hover:bg-gray-200 disabled:cursor-not-allowed disabled:bg-gray-600">
             Realizar Reserva
           </button>
 
           <button
             type="button"
             (click)="cancelar()"
-            class="px-6 py-3 bg-[#4e4e4e] hover:bg-[#3a3a3a] text-white font-semibold rounded-lg shadow-md transition">
+            class="rounded-lg bg-[#4e4e4e] px-6 py-3 font-semibold text-white shadow-md transition hover:bg-[#3a3a3a]">
             Cancelar
           </button>
         </div>
       </form>
     </div>
-
   </div>
-</section>
+</div>
+
+<!-- Onda SVG decorativa en la parte inferior -->
+<svg class="absolute bottom-0 left-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+    <path fill="#fff" fill-opacity="1" d="M0,0L40,42.7C80,85,160,171,240,197.3C320,224,400,192,480,154.7C560,117,640,75,720,74.7C800,75,880,117,960,154.7C1040,192,1120,224,1200,213.3C1280,203,1360,149,1400,122.7L1440,96L1440,320L1400,320C1360,320,1280,320,1200,320C1120,320,1040,320,960,320C880,320,800,320,720,320C640,320,560,320,480,320C400,320,320,320,240,320C160,320,80,320,40,320L0,320Z"></path>
+</svg>

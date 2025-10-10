@@ -7,7 +7,7 @@ interface Reserva {
   fecha: string;
   hora: string;
   personas: number;
-  estado: 'Confirmada' | 'Pendiente' | 'Pagada';
+  estado: 'Confirmada' | 'Pendiente' | 'Pagada' | 'Cancelada';
 }
 
 @Component({
