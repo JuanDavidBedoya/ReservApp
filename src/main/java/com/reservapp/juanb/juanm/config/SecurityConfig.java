@@ -19,7 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static org.springframework.security.config.Customizer.withDefaults; // <--- CAMBIO 2: Importar withDefaults
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -54,26 +54,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors(withDefaults()) // <--- CAMBIO 4: Habilitar CORS en la cadena de filtros de seguridad
+            .cors(withDefaults())
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                 
-                // --- 0. PERMITIR PETICIONES PREFLIGHT (CORS) ---
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // <--- CAMBIO 5: Permitir todas las peticiones OPTIONS
+                // --- CAMBIO PARA DEPURACIÓN ---
+                // Se reemplazan todas las reglas específicas por una que lo permite todo.
+                .anyRequest().permitAll()
 
-                // --- 1. RUTAS PÚBLICAS (ACCESIBLES POR CUALQUIERA) ---
-                .requestMatchers("/auth/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
-
-                // --- 2. RUTAS PARA CLIENTES (Y TAMBIÉN PARA ADMINS) ---
-                .requestMatchers(HttpMethod.PUT, "/reservas/**", "/usuarios/**", "/comentarios/**", "/pagos/**").hasAnyRole("CLIENTE", "ADMINISTRADOR")
-                .requestMatchers(HttpMethod.POST, "/reservas", "/pagos", "/comentarios").hasAnyRole("CLIENTE", "ADMINISTRADOR")
-                .requestMatchers(HttpMethod.PATCH, "/reservas/**/cancelar").hasAnyRole("CLIENTE", "ADMINISTRADOR")
-                
-                .requestMatchers(HttpMethod.GET, "/mesas", "/estados", "/tipos", "/metodos").authenticated()
-
-                // --- 3. RUTAS EXCLUSIVAS PARA ADMINISTRADOR ---
-                .anyRequest().hasRole("ADMINISTRADOR")
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authenticationProvider(authenticationProvider())
@@ -82,3 +70,4 @@ public class SecurityConfig {
         return http.build();
     }
 }
+

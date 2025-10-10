@@ -1,6 +1,7 @@
 <div class="absolute top-0 left-0 h-full w-full overflow-hidden bg-black bg-gradient-to-b from-black via-gray-900 to-gray-800"></div>
 
-<div class="relative flex min-h-screen items-center justify-center p-4">
+<!-- Se envuelve en un tag <form> para manejar el envío con (ngSubmit) -->
+<form (ngSubmit)="enviarComentario()" class="relative flex min-h-screen items-center justify-center p-4">
 
   <div class="z-10 w-full max-w-lg flex-col gap-6 rounded-2xl bg-[#1a1a1a] p-8 shadow-xl">
 
@@ -33,6 +34,7 @@
     <!-- Campo de comentario -->
     <textarea
       [(ngModel)]="comentario"
+      name="comentario"
       rows="4"
       class="mt-6 w-full rounded-xl border border-[#4e4e4e] bg-[#0d0d0d] p-3 text-white outline-none resize-none focus:border-[#ffffff]"
       placeholder="Escribe tu comentario aquí..."
@@ -40,14 +42,16 @@
 
     <!-- Botones -->
     <div class="mt-4 flex justify-center gap-6">
+      <!-- El botón de Enviar ahora es de tipo 'submit' para que funcione con el formulario -->
       <button
-        (click)="enviarComentario()"
+        type="submit"
         class="rounded-xl bg-[#ffffff] px-6 py-2 font-semibold text-black transition duration-200 hover:bg-[#cccccc]"
       >
         Enviar
       </button>
 
       <button
+        type="button"
         (click)="cancelar()"
         class="rounded-xl bg-[#4e4e4e] px-6 py-2 font-semibold text-[#ffffff] transition duration-200 hover:bg-[#3a3a3a]"
       >
@@ -55,7 +59,7 @@
       </button>
     </div>
   </div>
-</div>
+</form>
 
 <svg class="absolute bottom-0 left-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
     <path fill="#fff" fill-opacity="1" d="M0,0L40,42.7C80,85,160,171,240,197.3C320,224,400,192,480,154.7C560,117,640,75,720,74.7C800,75,880,117,960,154.7C1040,192,1120,224,1200,213.3C1280,203,1360,149,1400,122.7L1440,96L1440,320L1400,320C1360,320,1280,320,1200,320C1120,320,1040,320,960,320C880,320,800,320,720,320C640,320,560,320,480,320C400,320,320,320,240,320C160,320,80,320,40,320L0,320Z"></path>

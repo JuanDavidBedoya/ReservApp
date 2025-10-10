@@ -10,8 +10,8 @@ export class HomePrivate {
 
   constructor(private router: Router) {}
 
-  hacerReserva() {
-    this.router.navigate(['/reserva']);
+  irA(ruta: string) {
+    this.router.navigate([ruta]);
   }
 
 }
