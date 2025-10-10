@@ -24,9 +24,6 @@ export class Reserva implements OnInit {
     numeroPersonas: 1,
     fecha: '',
     hora: '',
-    idReserva: '',
-    numeroMesa: 0,
-    nombreEstado: ''
   };
 
   formValid = false;

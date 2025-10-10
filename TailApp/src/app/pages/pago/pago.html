@@ -1,7 +1,6 @@
 <div class="absolute top-0 left-0 h-full w-full overflow-hidden bg-black bg-gradient-to-b from-black via-gray-900 to-gray-800"></div>
 
 <div class="relative flex min-h-screen items-center justify-center p-4">
-
   <div class="z-10 w-full max-w-md rounded-2xl bg-[#1a1a1a] p-8 shadow-lg">
     <h2 class="mb-6 text-center text-2xl font-bold text-[#ffffff]">Detalles del Pago</h2>
 
@@ -11,7 +10,7 @@
         <input
           type="text"
           formControlName="idReserva"
-          class="w-full rounded border border-[#4e4e4e] bg-[#0d0d0d] p-2 text-gray-300 outline-none focus:border-[#ffffff]"
+          class="w-full rounded border border-[#4e4e4e] bg-[#0d0d0d] p-2 text-gray-300 outline-none"
           readonly
         />
       </div>
@@ -21,7 +20,7 @@
         <input
           type="text"
           formControlName="monto"
-          class="w-full rounded border border-[#4e4e4e] bg-[#0d0d0d] p-2 text-gray-300 outline-none focus:border-[#ffffff]"
+          class="w-full rounded border border-[#4e4e4e] bg-[#0d0d0d] p-2 text-gray-300 outline-none"
           readonly
         />
       </div>
@@ -30,8 +29,9 @@
         <label class="mb-1 block text-sm text-gray-400">Método de Pago</label>
         <select
           formControlName="metodoPago"
-          class="w-full rounded border border-[#4e4e4e] bg-[#0d0d0d] p-2 text-white outline-none focus:border-[#ffffff]"
+          class="w-full rounded border border-[#4e4e4e] bg-[#0d0d0d] p-2 text-white outline-none"
         >
+          <option value="">Seleccione un método</option>
           <option value="Visa">Visa</option>
           <option value="Mastercard">Mastercard</option>
           <option value="Davivienda">Davivienda</option>
@@ -43,8 +43,9 @@
         <button
           type="submit"
           class="rounded-lg bg-white px-6 py-3 font-semibold text-[#0d0d0d] shadow-md transition hover:bg-gray-200"
+          [disabled]="cargando"
         >
-          Proceder con el Pago
+          {{ cargando ? 'Procesando...' : 'Proceder con el Pago' }}
         </button>
 
         <button
@@ -59,7 +60,8 @@
   </div>
 </div>
 
-<!-- Onda SVG decorativa en la parte inferior -->
 <svg class="absolute bottom-0 left-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
-    <path fill="#fff" fill-opacity="1" d="M0,0L40,42.7C80,85,160,171,240,197.3C320,224,400,192,480,154.7C560,117,640,75,720,74.7C800,75,880,117,960,154.7C1040,192,1120,224,1200,213.3C1280,203,1360,149,1400,122.7L1440,96L1440,320L1400,320C1360,320,1280,320,1200,320C1120,320,1040,320,960,320C880,320,800,320,720,320C640,320,560,320,480,320C400,320,320,320,240,320C160,320,80,320,40,320L0,320Z"></path>
+  <path fill="#fff" fill-opacity="1"
+    d="M0,0L40,42.7C80,85,160,171,240,197.3C320,224,400,192,480,154.7C560,117,640,75,720,74.7C800,75,880,117,960,154.7C1040,192,1120,224,1200,213.3C1280,203,1360,149,1400,122.7L1440,96V320H0Z">
+  </path>
 </svg>

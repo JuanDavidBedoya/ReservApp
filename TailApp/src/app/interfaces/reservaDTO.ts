@@ -1,9 +1,9 @@
 export interface ReservaDTO {
-  idReserva: string;
+  idReserva?: string;
   fecha: string;          
   hora: string;           
   numeroPersonas: number;
   cedulaUsuario: string;
-  numeroMesa: number;
-  nombreEstado: string;
+  numeroMesa?: number;
+  nombreEstado?: string;
 }

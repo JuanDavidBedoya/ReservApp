@@ -26,6 +26,10 @@ export class ReservaService {
     return this.http.get<ReservaDTO>(`${this.apiUrl}/${id}`);
   }
 
+  actualizarReserva(id: string, reserva: Partial<ReservaDTO>): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, reserva);
+  }
+
   cancelarReserva(id: string): Observable<void> {
     return this.http.patch<void>(`${this.apiUrl}/${id}/cancelar`, {});
   }

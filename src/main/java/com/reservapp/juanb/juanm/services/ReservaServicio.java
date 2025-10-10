@@ -332,10 +332,7 @@ public class ReservaServicio {
         }
     }
 
-    public List<ReservaResponseDTO> findByUsuario(String cedulaUsuario) {
-        return reservaRepositorio.findByCedulaUsuario(cedulaUsuario)
-                .stream()
-                .map(reservaMapper::toResponseDTO) 
-                .collect(Collectors.toList());
+    public List<ReservaResponseDTO> findByUsuario(String cedula) {
+        return reservaRepositorio.findReservasByCedula(cedula);
     }
 }

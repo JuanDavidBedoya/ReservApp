@@ -1,7 +1,9 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { ReservaService } from '../../services/reserva-service'; 
+import { ReservaDTO } from '../../interfaces/reservaDTO'; 
 
 @Component({
   selector: 'app-detalle-reserva',
@@ -11,42 +13,79 @@ import { CommonModule } from '@angular/common';
 export class DetalleReserva implements OnInit {
   reservaForm!: FormGroup;
   reservaId!: string;
+  cargando = true;
 
-  constructor(private route: ActivatedRoute, private fb: FormBuilder, private router: Router) {}
+  constructor(
+    private route: ActivatedRoute,
+    private fb: FormBuilder,
+    private router: Router,
+    private reservaService: ReservaService
+  ) {}
 
   ngOnInit() {
     this.reservaId = this.route.snapshot.paramMap.get('id') || '';
-    // Simular datos de la reserva (reemplazar con tu servicio real)
-    const reserva = {
-      id: this.reservaId,
-      fecha: '2025-10-15',
-      hora: '19:00',
-      personas: 4,
-    };
+    this.cargarReserva();
+  }
 
-    this.reservaForm = this.fb.group({
-      fecha: [reserva.fecha, Validators.required],
-      hora: [reserva.hora, Validators.required],
-      personas: [reserva.personas, [Validators.required, Validators.min(1)]],
+  cargarReserva() {
+    this.reservaService.getReservaPorId(this.reservaId).subscribe({
+      next: (reserva: ReservaDTO) => {
+        this.reservaForm = this.fb.group({
+          fecha: [reserva.fecha, Validators.required],
+          hora: [reserva.hora, Validators.required],
+          personas: [reserva.numeroPersonas, [Validators.required, Validators.min(1)]],
+        });
+        this.cargando = false;
+      },
+      error: (err) => {
+        console.error('Error al cargar la reserva:', err);
+        alert('No se pudo cargar la reserva.');
+        this.router.navigate(['/usuario-reserva']);
+      },
     });
   }
 
   guardarCambios() {
-    if (this.reservaForm.valid) {
-      console.log('Reserva modificada:', this.reservaForm.value);
-      alert('Reserva actualizada correctamente ✅');
-      this.router.navigate(['/usuario-reserva']);
-    } else {
+    if (this.reservaForm.invalid) {
       alert('Por favor, completa todos los campos correctamente.');
+      return;
     }
+
+    const datosActualizados: Partial<ReservaDTO> = {
+      fecha: this.reservaForm.value.fecha,
+      hora: this.reservaForm.value.hora,
+      numeroPersonas: this.reservaForm.value.personas,
+      // si el backend requiere cédulaUsuario, puedes obtenerla del localStorage:
+      cedulaUsuario: JSON.parse(localStorage.getItem('usuario') || '{}').cedula,
+    };
+
+    this.reservaService.actualizarReserva(this.reservaId, datosActualizados).subscribe({
+      next: () => {
+        alert('✅ Reserva actualizada correctamente');
+        this.router.navigate(['/usuario-reserva']);
+      },
+      error: (err) => {
+        console.error(err);
+        alert('❌ No se pudo actualizar la reserva');
+      },
+    });
   }
 
   cancelarReserva() {
     const confirmar = confirm('¿Seguro que deseas cancelar esta reserva?');
-    if (confirmar) {
-      alert('Reserva cancelada ❌');
-      this.router.navigate(['/usuario-reserva']);
-    }
+    if (!confirmar) return;
+
+    this.reservaService.cancelarReserva(this.reservaId).subscribe({
+      next: () => {
+        alert('❌ Reserva cancelada correctamente');
+        this.router.navigate(['/usuario-reserva']);
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Error al cancelar la reserva');
+      },
+    });
   }
 }
+
 
