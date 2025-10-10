@@ -19,18 +19,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static org.springframework.security.config.Customizer.withDefaults; // <--- CAMBIO 2: Importar withDefaults
+
 @Configuration
 @EnableWebSecurity
 @EnableConfigurationProperties(JwtProperties.class)
-
 public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
     private final UserDetailsService userDetailsService;
 
-    public SecurityConfig(JwtAuthFilter jwtAuthFilter, UserDetailsService userDetailsService ){
-        this.jwtAuthFilter=jwtAuthFilter;
-        this.userDetailsService=userDetailsService;
+    public SecurityConfig(JwtAuthFilter jwtAuthFilter, UserDetailsService userDetailsService) {
+        this.jwtAuthFilter = jwtAuthFilter;
+        this.userDetailsService = userDetailsService;
     }
 
     @Bean
@@ -50,31 +51,30 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-   @Bean
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+            .cors(withDefaults()) // <--- CAMBIO 4: Habilitar CORS en la cadena de filtros de seguridad
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                 
-                // --- 1. RUTAS PÚBLICAS (ACCESIBLES POR CUALQUIERA) ---
+                // --- 0. PERMITIR PETICIONES PREFLIGHT (CORS) ---
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // <--- CAMBIO 5: Permitir todas las peticiones OPTIONS
 
+                // --- 1. RUTAS PÚBLICAS (ACCESIBLES POR CUALQUIERA) ---
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
 
                 // --- 2. RUTAS PARA CLIENTES (Y TAMBIÉN PARA ADMINS) ---
-
                 .requestMatchers(HttpMethod.PUT, "/reservas/**", "/usuarios/**", "/comentarios/**", "/pagos/**").hasAnyRole("CLIENTE", "ADMINISTRADOR")
                 .requestMatchers(HttpMethod.POST, "/reservas", "/pagos", "/comentarios").hasAnyRole("CLIENTE", "ADMINISTRADOR")
                 .requestMatchers(HttpMethod.PATCH, "/reservas/**/cancelar").hasAnyRole("CLIENTE", "ADMINISTRADOR")
                 
-                // Catálogos que cualquier usuario autenticado (Cliente o Admin) necesita ver.
                 .requestMatchers(HttpMethod.GET, "/mesas", "/estados", "/tipos", "/metodos").authenticated()
 
                 // --- 3. RUTAS EXCLUSIVAS PARA ADMINISTRADOR ---
-
                 .anyRequest().hasRole("ADMINISTRADOR")
             )
-            // Configuración para usar JWT (sin estado)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authenticationProvider(authenticationProvider())
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

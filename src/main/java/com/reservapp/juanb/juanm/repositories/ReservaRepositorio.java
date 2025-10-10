@@ -16,6 +16,5 @@ public interface ReservaRepositorio extends JpaRepository<Reserva, UUID>{
     //Métods adicionales usados en el Service
     List<Reserva> findByMesaAndFecha(Mesa mesa, LocalDate fecha);
 
-    List<Reserva> findByCedulaUsuario(String cedulaUsuario);
 }
 

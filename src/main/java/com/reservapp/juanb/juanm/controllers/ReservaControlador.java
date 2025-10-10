@@ -95,13 +95,4 @@ public class ReservaControlador {
         reservaServicio.cancel(uuid);
         return ResponseEntity.noContent().build(); // 204
     }
-
-    @GetMapping("/usuario/{cedula}")
-    public ResponseEntity<List<ReservaResponseDTO>> getByUsuario(@PathVariable("cedula") String cedula) {
-        List<ReservaResponseDTO> reservas = reservaServicio.findByUsuario(cedula);
-        if (reservas.isEmpty()) {
-            return ResponseEntity.noContent().build(); // 204
-        }
-        return ResponseEntity.ok(reservas); // 200
-    }
 }

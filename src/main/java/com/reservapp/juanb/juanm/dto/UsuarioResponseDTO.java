@@ -1,4 +1,3 @@
-// Ubicación: com/reservapp/juanb/juanm/dto/UsuarioResponseDTO.java
 package com.reservapp.juanb.juanm.dto;
 
 public record UsuarioResponseDTO(
