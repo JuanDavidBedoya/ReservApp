@@ -331,4 +331,8 @@ public class ReservaServicio {
             throw new BadRequestException("La hora de la reserva debe estar entre las 10:00 y las 22:00.");
         }
     }
+
+    public List<ReservaResponseDTO> findByUsuario(String cedula) {
+        return reservaRepositorio.findReservasByCedula(cedula);
+    }
 }
