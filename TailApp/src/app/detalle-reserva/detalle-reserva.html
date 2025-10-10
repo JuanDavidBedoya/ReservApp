@@ -1,0 +1,40 @@
+<section class="min-h-[calc(101.9vh-6rem)] bg-[#ffffff] text-white flex flex-col items-center pt-90">  
+    <div class="bg-neutral-900 rounded-2xl p-8 w-full max-w-lg shadow-lg border border-neutral-800">
+        <h2 class="text-2xl font-bold mb-6 text-center">Detalles de la Reserva</h2>
+
+        <form [formGroup]="reservaForm" class="space-y-4">
+        <div>
+            <label class="block text-sm mb-1 text-neutral-400">Fecha</label>
+            <input type="date" formControlName="fecha" class="w-full p-2 rounded-lg bg-neutral-800 text-white focus:ring-2 focus:ring-amber-700 outline-none" />
+        </div>
+
+        <div>
+            <label class="block text-sm mb-1 text-neutral-400">Hora</label>
+            <input type="time" formControlName="hora" class="w-full p-2 rounded-lg bg-neutral-800 text-white focus:ring-2 focus:ring-amber-700 outline-none" />
+        </div>
+
+        <div>
+            <label class="block text-sm mb-1 text-neutral-400">Cantidad de personas</label>
+            <input type="number" formControlName="personas" min="1" class="w-full p-2 rounded-lg bg-neutral-800 text-white focus:ring-2 focus:ring-amber-700 outline-none" />
+        </div>
+
+        <div class="flex justify-between mt-6">
+            <button
+            type="button"
+            (click)="guardarCambios()"
+            class="bg-[#ffffff] hover:bg-[#4e4e4e] text-black font-semibold py-2 px-4 rounded-lg transition-all"
+            >
+            Guardar cambios
+            </button>
+
+            <button
+            type="button"
+            (click)="cancelarReserva()"
+            class="bg-[#4e4e4e] hover:bg-[#2e2e2e] text-white font-semibold py-2 px-4 rounded-lg transition-all"
+            >
+            Cancelar reserva
+            </button>
+        </div>
+        </form>
+    </div>
+</section>

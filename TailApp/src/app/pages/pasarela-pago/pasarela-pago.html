@@ -1,0 +1,70 @@
+<section class="min-h-[calc(101.9vh-6rem)] bg-[#ffffff] text-white flex flex-col items-center pt-80">
+  <div class="max-w-md w-full bg-[#1a1a1a] p-8 rounded-2xl shadow-lg">
+    <h2 class="text-2xl font-bold text-[#ffffff] mb-6 text-center">
+      Pasarela de Pago - {{ metodoPago }}
+    </h2>
+
+    <form [formGroup]="paymentForm" (ngSubmit)="pagar()" class="space-y-4">
+      <div>
+        <label class="block mb-1 text-sm text-gray-400">Nombre del Titular</label>
+        <input
+          type="text"
+          formControlName="nombre"
+          placeholder="Ej: Juan Pérez"
+          class="w-full p-2 rounded bg-[#0d0d0d] border border-[#4e4e4e] text-white placeholder-gray-500 focus:border-[#ffffff] outline-none"
+        />
+      </div>
+
+      <div>
+        <label class="block mb-1 text-sm text-gray-400">Número de Tarjeta</label>
+        <input
+          type="text"
+          maxlength="16"
+          formControlName="numeroTarjeta"
+          placeholder="1234 5678 9012 3456"
+          class="w-full p-2 rounded bg-[#0d0d0d] border border-[#4e4e4e] text-white placeholder-gray-500 focus:border-[#ffffff] outline-none"
+        />
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block mb-1 text-sm text-gray-400">Expiración (MM/AA)</label>
+          <input
+            type="text"
+            formControlName="expiracion"
+            placeholder="08/27"
+            class="w-full p-2 rounded bg-[#0d0d0d] border border-[#4e4e4e] text-white placeholder-gray-500 focus:border-[#ffffff] outline-none"
+          />
+        </div>
+
+        <div>
+          <label class="block mb-1 text-sm text-gray-400">CVV</label>
+          <input
+            type="text"
+            maxlength="4"
+            formControlName="cvv"
+            placeholder="123"
+            class="w-full p-2 rounded bg-[#0d0d0d] border border-[#4e4e4e] text-white placeholder-gray-500 focus:border-[#ffffff] outline-none"
+          />
+        </div>
+      </div>
+
+      <div class="flex justify-center space-x-4 mt-6">
+        <button
+          type="submit"
+          class="px-6 py-3 bg-[#ffffff] hover:bg-[#4e4e4e] text-[#0d0d0d] font-semibold rounded-lg shadow-md transition"
+        >
+          Confirmar Pago
+        </button>
+
+        <button
+          type="button"
+          (click)="cancelar()"
+          class="px-6 py-3 bg-[#4e4e4e] hover:bg-[#2e2e2e] text-white font-semibold rounded-lg shadow-md transition"
+        >
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
