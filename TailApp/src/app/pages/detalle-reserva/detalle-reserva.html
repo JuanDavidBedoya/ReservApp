@@ -26,17 +26,35 @@
         <button
           type="button"
           (click)="guardarCambios()"
-          class="bg-white hover:bg-gray-200 text-black font-semibold py-2 px-4 rounded-lg transition-all"
+          [disabled]="reserva?.nombreEstado === 'Cancelada' || reserva?.nombreEstado === 'Pagada'"
+          class="bg-white hover:bg-gray-200 text-black font-semibold py-2 px-2 rounded-lg transition-all"
         >
           Guardar cambios
         </button>
 
         <button
           type="button"
+          (click)="irAPago()"
+          class="bg-white hover:bg-gray-200 text-black font-semibold py-2 px-2 rounded-lg transition-all"
+        >
+          Pagar
+        </button>
+
+        <button
+          type="button"
           (click)="cancelarReserva()"
-          class="bg-red-700 hover:bg-red-800 text-white font-semibold py-2 px-4 rounded-lg transition-all"
+          [disabled]="reserva?.nombreEstado === 'Cancelada' || reserva?.nombreEstado === 'Pagada'"
+          class="bg-red-700 hover:bg-red-800 text-white font-semibold py-2 px-2 rounded-lg transition-all"
         >
           Cancelar reserva
+        </button>
+
+        <button
+          type="button"
+          (click)="volver()"
+          class="bg-white hover:bg-gray-200 text-black font-semibold py-2 px-2 rounded-lg transition-all"
+        >
+          Volver
         </button>
       </div>
     </form>
