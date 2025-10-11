@@ -2,18 +2,26 @@
   <div class="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
     <div class="text-2xl font-bold text-white">ReservApp</div>
 
-    <nav class="hidden md:flex items-center space-x-6 text-white font-medium">
-      @if (!isInicio()) {
-        <a href="#" class="hover:text-[#4e4e4e] transition">Inicio</a>
-      }
-      <a href="/login" class="hover:text-gray-400 transition">Iniciar Sesión</a>
-      <a href="/registro" class="hover:text-gray-400 transition">Registrarse</a>
+    @if (isLoggedIn) {
+      <nav class="hidden md:flex items-center space-x-6 text-white font-medium">
+        @if (isAdmin) {
+          <a routerLink="/home-admin" class="hover:text-gray-400 transition">Inicio</a>
+        } @else {
+          <a routerLink="/home-private" class="hover:text-gray-400 transition">Inicio</a>
+        }
 
-      <button 
-        (click)="logout()" 
-        class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition">
-        Cerrar Sesión
-      </button>
-    </nav>
+        <button
+          (click)="logout()"
+          class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition">
+          Cerrar Sesión
+        </button>
+      </nav>
+
+    } @else {
+      <nav class="hidden md:flex items-center space-x-6 text-white font-medium">
+        <a routerLink="/login" class="hover:text-gray-400 transition">Iniciar Sesión</a>
+        <a routerLink="/registro" class="hover:text-gray-400 transition">Registrarse</a>
+      </nav>
+    }
   </div>
 </header>
