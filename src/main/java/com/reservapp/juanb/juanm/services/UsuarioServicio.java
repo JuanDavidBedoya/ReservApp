@@ -79,7 +79,11 @@ public class UsuarioServicio implements UserDetailsService{
         usuarioExistente.setNombre(usuarioDTO.nombre());
         usuarioExistente.setCorreo(usuarioDTO.correo());
         usuarioExistente.setTelefono(usuarioDTO.telefono());
-
+        
+        if (usuarioDTO.contrasena() != null && !usuarioDTO.contrasena().trim().isEmpty()) {
+        usuarioExistente.setContrasena(usuarioDTO.contrasena());
+        }
+        
         Usuario usuarioActualizado = usuarioRepositorio.save(usuarioExistente);
         return usuarioMapper.toResponseDTO(usuarioActualizado);
     }   
