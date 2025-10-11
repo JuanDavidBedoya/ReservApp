@@ -12,4 +12,6 @@ import com.reservapp.juanb.juanm.entities.Metodo;
 public interface MetodoRepositorio extends JpaRepository<Metodo, UUID>{
 
     Optional<Metodo> findByIdMetodo(UUID idMetodo);
+
+    Optional<Metodo> findByNombre(String nombre);
 }

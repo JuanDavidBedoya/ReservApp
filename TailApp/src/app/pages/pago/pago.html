@@ -4,7 +4,8 @@
   <div class="z-10 w-full max-w-md rounded-2xl bg-[#1a1a1a] p-8 shadow-lg">
     <h2 class="mb-6 text-center text-2xl font-bold text-[#ffffff]">Detalles del Pago</h2>
 
-    <form [formGroup]="paymentForm" (ngSubmit)="procederPago()" class="space-y-4">
+    <form [formGroup]="paymentForm" class="space-y-4">
+      <!-- ID Reserva -->
       <div>
         <label class="mb-1 block text-sm text-gray-400">ID de Reserva</label>
         <input
@@ -15,6 +16,7 @@
         />
       </div>
 
+      <!-- Monto -->
       <div>
         <label class="mb-1 block text-sm text-gray-400">Monto (COP)</label>
         <input
@@ -25,33 +27,146 @@
         />
       </div>
 
+      <!-- Método de Pago -->
       <div>
-        <label class="mb-1 block text-sm text-gray-400">Método de Pago</label>
+        <label class="mb-1 block text-sm text-gray-400">Tipo de Tarjeta</label>
         <select
           formControlName="metodoPago"
-          class="w-full rounded border border-[#4e4e4e] bg-[#0d0d0d] p-2 text-white outline-none"
+          class="w-full rounded border border-[#4e4e4e] bg-[#0d0d0d] p-2 text-white outline-none transition focus:border-blue-500"
         >
-          <option value="">Seleccione un método</option>
+          <option value="">Seleccione un tipo de tarjeta</option>
           <option value="Visa">Visa</option>
           <option value="Mastercard">Mastercard</option>
-          <option value="Davivienda">Davivienda</option>
-          <option value="Bancolombia">Bancolombia</option>
+          <option value="American Express">American Express</option>
         </select>
+        @if (metodoPago?.invalid && metodoPago?.touched) {
+          <div class="mt-1 text-xs text-red-400">
+            Debes seleccionar un tipo de tarjeta
+          </div>
+        }
       </div>
 
+      <!-- Campos de Tarjeta (siempre visibles) -->
+      <div class="rounded-lg border border-blue-500/30 bg-blue-500/10 p-4">
+        <h3 class="mb-3 text-lg font-semibold text-white">Información de la Tarjeta</h3>
+        
+        <!-- Nombre del Titular -->
+        <div class="mb-3">
+          <label class="mb-1 block text-sm text-gray-300">Nombre del Titular</label>
+          <input
+            type="text"
+            formControlName="nombreTitular"
+            class="w-full rounded border border-[#4e4e4e] bg-[#0d0d0d] p-2 text-white outline-none transition focus:border-blue-500"
+            placeholder="Como aparece en la tarjeta"
+          />
+          @if (nombreTitular?.invalid && nombreTitular?.touched) {
+            <div class="mt-1 text-xs text-red-400">
+              @if (nombreTitular?.errors?.['required']) {
+                <div>El nombre del titular es obligatorio</div>
+              }
+              @if (nombreTitular?.errors?.['pattern']) {
+                <div>Solo se permiten letras y espacios</div>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Número de Tarjeta -->
+        <div class="mb-3">
+          <label class="mb-1 block text-sm text-gray-300">Número de Tarjeta</label>
+          <input
+            type="text"
+            formControlName="numeroTarjeta"
+            (input)="formatearNumeroTarjeta($event)"
+            class="w-full rounded border border-[#4e4e4e] bg-[#0d0d0d] p-2 text-white outline-none transition focus:border-blue-500"
+            placeholder="1234 5678 9012 3456"
+            maxlength="19"
+          />
+          @if (numeroTarjeta?.invalid && numeroTarjeta?.touched) {
+            <div class="mt-1 text-xs text-red-400">
+              @if (numeroTarjeta?.errors?.['required']) {
+                <div>El número de tarjeta es obligatorio</div>
+              }
+              @if (numeroTarjeta?.errors?.['longitudInvalida']) {
+                <div>El número debe tener entre 13 y 19 dígitos</div>
+              }
+              @if (numeroTarjeta?.errors?.['soloNumeros']) {
+                <div>El número solo puede contener dígitos</div>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <!-- Fecha de Expiración -->
+          <div>
+            <label class="mb-1 block text-sm text-gray-300">Fecha de Expiración</label>
+            <input
+              type="text"
+              formControlName="fechaExpiracion"
+              (blur)="validarFechaExpiracion()"
+              class="w-full rounded border border-[#4e4e4e] bg-[#0d0d0d] p-2 text-white outline-none transition focus:border-blue-500"
+              placeholder="MM/AA"
+              maxlength="5"
+            />
+            @if (fechaExpiracion?.invalid && fechaExpiracion?.touched) {
+              <div class="mt-1 text-xs text-red-400">
+                @if (fechaExpiracion?.errors?.['required']) {
+                  <div>La fecha de expiración es obligatoria</div>
+                }
+                @if (fechaExpiracion?.errors?.['pattern']) {
+                  <div>Formato debe ser MM/AA</div>
+                }
+                @if (fechaExpiracion?.errors?.['fechaExpirada']) {
+                  <div>La tarjeta está vencida</div>
+                }
+              </div>
+            }
+          </div>
+
+          <!-- CVV -->
+          <div>
+            <label class="mb-1 block text-sm text-gray-300">CVV</label>
+            <input
+              type="password"
+              formControlName="cvv"
+              class="w-full rounded border border-[#4e4e4e] bg-[#0d0d0d] p-2 text-white outline-none transition focus:border-blue-500"
+              placeholder="123"
+              maxlength="4"
+            />
+            @if (cvv?.invalid && cvv?.touched) {
+              <div class="mt-1 text-xs text-red-400">
+                @if (cvv?.errors?.['required']) {
+                  <div>El CVV es obligatorio</div>
+                }
+                @if (cvv?.errors?.['pattern']) {
+                  <div>El CVV debe tener 3 o 4 dígitos</div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Botones -->
       <div class="mt-6 flex justify-center space-x-4">
         <button
-          type="submit"
-          class="rounded-lg bg-white px-6 py-3 font-semibold text-[#0d0d0d] shadow-md transition hover:bg-gray-200"
+          type="button"
+          (click)="procederPago()"
           [disabled]="cargando"
+          class="flex items-center justify-center rounded-lg bg-white px-6 py-3 font-semibold text-[#0d0d0d] shadow-md transition hover:bg-gray-200 disabled:opacity-50"
         >
-          {{ cargando ? 'Procesando...' : 'Proceder con el Pago' }}
+          @if (cargando) {
+            <span class="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600"></span>
+          }
+          {{ cargando ? 'Procesando...' : 'Pagar' }}
         </button>
 
         <button
           type="button"
           (click)="cancelar()"
-          class="rounded-lg bg-[#4e4e4e] px-6 py-3 font-semibold text-white shadow-md transition hover:bg-[#2e2e2e]"
+          [disabled]="cargando"
+          class="rounded-lg bg-[#4e4e4e] px-6 py-3 font-semibold text-white shadow-md transition hover:bg-[#2e2e2e] disabled:opacity-50"
         >
           Cancelar
         </button>

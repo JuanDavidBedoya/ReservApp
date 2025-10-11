@@ -11,4 +11,8 @@ export interface PagoRequestDTO {
   idReserva: string;
   monto: number;
   idMetodo: string;
+  nombreTitular: string;
+  numeroTarjeta: string;
+  fechaExpiracion: string;
+  cvv: string;
 }

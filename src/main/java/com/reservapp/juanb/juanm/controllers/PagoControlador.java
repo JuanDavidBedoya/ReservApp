@@ -41,17 +41,11 @@ public class PagoControlador {
         return ResponseEntity.ok(pagoServicio.findById(uuid));
     }
 
-    @PostMapping("/pagar-reserva")
+    @PostMapping
     public ResponseEntity<PagoResponseDTO> pagarReserva(@RequestBody PagoRequestDTO pagoRequest) {
         try {
-            // ✅ Devuelve JSON, NO redirección HTML
-            PagoResponseDTO response = pagoServicio.pagarReserva(
-                pagoRequest.idReserva(), 
-                pagoRequest.monto(), 
-                pagoRequest.idMetodo()
-            );
-            
-            return ResponseEntity.ok(response); // ← SOLO JSON
+            PagoResponseDTO response = pagoServicio.pagarReserva(pagoRequest);
+            return ResponseEntity.ok(response);
             
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().build();

@@ -4,7 +4,6 @@ import { Perfil } from './pages/perfil/perfil';
 import { Reserva } from './pages/reserva/reserva';
 import { Comentarios } from './pages/comentario/comentario';
 import { Pago } from './pages/pago/pago';
-import { PasarelaPago } from './pages/pasarela-pago/pasarela-pago';
 import { DetalleReserva } from './pages/detalle-reserva/detalle-reserva';
 import { Registro } from './pages/registro/registro';
 import { UsuarioReservas } from './pages/usuario-reserva/usuario-reserva';
@@ -26,7 +25,6 @@ export const routes: Routes = [
   { path: 'perfil', component: Perfil, canActivate: [AuthGuard]},
   { path: 'reserva', component: Reserva, canActivate: [AuthGuard] },
   { path: 'pago', component: Pago, canActivate: [AuthGuard] },
-  { path: 'pasarela-pago', component: PasarelaPago , canActivate: [AuthGuard]},
   { path: 'comentarios', component: Comentarios, canActivate: [AuthGuard]},
   { path: 'login', component: Login, canActivate: [AuthenticatedGuard]},
   { path: 'usuario-reserva', component: UsuarioReservas, canActivate: [AuthGuard] },

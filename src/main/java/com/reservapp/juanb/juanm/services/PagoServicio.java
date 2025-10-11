@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.reservapp.juanb.juanm.dto.PagoRequestDTO;
 import com.reservapp.juanb.juanm.dto.PagoResponseDTO;
 import com.reservapp.juanb.juanm.entities.Estado;
 import com.reservapp.juanb.juanm.entities.Metodo;
@@ -28,7 +30,6 @@ import com.reservapp.juanb.juanm.repositories.PagoRepositorio;
 import com.reservapp.juanb.juanm.repositories.ReservaRepositorio;
 
 import jakarta.annotation.Nullable;
-import jakarta.transaction.Transactional;
 
 @Service
 public class PagoServicio {
@@ -64,10 +65,19 @@ public class PagoServicio {
         return pagoMapper.toResponseDTO(pago);
     }
 
-    @Transactional
-    public PagoResponseDTO pagarReserva(UUID idReserva, double monto, UUID idMetodo) {
+    public PagoResponseDTO pagarReserva(PagoRequestDTO pagoRequest) {
+       // Validar tarjeta con algoritmo de Luhn
+        if (!validarTarjetaPorLuhn(pagoRequest.numeroTarjeta())) {
+            throw new BadRequestException("El número de tarjeta no es válido");
+        }
+
+        // Validar fecha de expiración
+        if (!validarFechaExpiracion(pagoRequest.fechaExpiracion())) {
+            throw new BadRequestException("La fecha de expiración no es válida o la tarjeta está vencida");
+        }
+
         // Buscar la reserva
-        Reserva reserva = reservaRepositorio.findById(idReserva)
+        Reserva reserva = reservaRepositorio.findById(pagoRequest.idReserva())
                 .orElseThrow(() -> new ResourceNotFoundException("Reserva no encontrada"));
 
         // Validar que no tenga ya un pago
@@ -94,50 +104,50 @@ public class PagoServicio {
         }
 
         // Buscar método de pago
-        Metodo metodo = metodoRepositorio.findById(idMetodo)
+        Metodo metodo = metodoRepositorio.findById(pagoRequest.idMetodo())
                 .orElseThrow(() -> new ResourceNotFoundException("Método de pago no encontrado"));
 
-        // Crear el pago con estado Pendiente
-        Estado estadoPendiente = estadoRepositorio.findByNombre("Pendiente")
-                .orElseThrow(() -> new ResourceNotFoundException("Estado 'Pendiente' no encontrado"));
+        // Simular proceso de pago con tarjeta
+        boolean pagoExitoso = simularProcesamientoTarjeta();
 
+        // Determinar estados según el resultado
+        Estado estadoPago = pagoExitoso ? 
+            estadoRepositorio.findByNombre("Confirmado")
+                .orElseThrow(() -> new ResourceNotFoundException("Estado 'Confirmado' no encontrado")) :
+            estadoRepositorio.findByNombre("Rechazado")
+                .orElseThrow(() -> new ResourceNotFoundException("Estado 'Rechazado' no encontrado"));
+
+        Estado estadoReserva = pagoExitoso ? 
+            estadoRepositorio.findByNombre("Pagada")
+                .orElseThrow(() -> new ResourceNotFoundException("Estado 'Pagada' no encontrado")) :
+            reserva.getEstado(); // Mantener el estado actual si el pago falla
+
+        // Crear y guardar el pago
         Pago pago = new Pago();
         pago.setReserva(reserva);
-        pago.setMonto(monto);
+        pago.setMonto(pagoRequest.monto());
         pago.setMetodo(metodo);
-        pago.setEstado(estadoPendiente);
-        pago.setFechaPago(new Date(0));
+        pago.setEstado(estadoPago);
+        pago.setFechaPago(new Date(0)); // Fecha actual
         pagoRepositorio.save(pago);
 
-        // Simular proceso de confirmación
-        boolean pagoExitoso = true; // Aquí podrías integrar una pasarela de pagos real
-
+        // Actualizar estado de la reserva si el pago fue exitoso
         if (pagoExitoso) {
-            // Cambiar pago a Confirmado
-            Estado estadoConfirmado = estadoRepositorio.findByNombre("Confirmado")
-                    .orElseThrow(() -> new ResourceNotFoundException("Estado 'Confirmado' no encontrado"));
-            pago.setEstado(estadoConfirmado);
-            pagoRepositorio.save(pago);
-
-            // Cambiar reserva a Pagada
-            Estado estadoPagada = estadoRepositorio.findByNombre("Pagada")
-                    .orElseThrow(() -> new ResourceNotFoundException("Estado 'Pagada' no encontrado"));
-            reserva.setEstado(estadoPagada);
+            reserva.setEstado(estadoReserva);
             reservaRepositorio.save(reserva);
-
             enviarNotificacionConAdjunto(reserva, "pagada", pago);
         } else {
-            // Cambiar pago a Rechazado
-            Estado estadoRechazado = estadoRepositorio.findByNombre("Rechazado")
-                    .orElseThrow(() -> new ResourceNotFoundException("Estado 'Rechazado' no encontrado"));
-            pago.setEstado(estadoRechazado);
-            pagoRepositorio.save(pago);
-
             enviarNotificacionConAdjunto(reserva, "pago_rechazado", pago);
         }
 
         return pagoMapper.toResponseDTO(pago);
     }
+
+    private boolean simularProcesamientoTarjeta() {
+        
+        return true;
+    }
+    
 
     private void enviarNotificacionConAdjunto(Reserva reserva, String tipo, @Nullable Pago pago) {
         try {
@@ -227,6 +237,76 @@ public class PagoServicio {
             return baos.toByteArray();
         } catch (Exception e) {
             throw new RuntimeException("Error al generar la factura PDF: " + e.getMessage());
+        }
+    }
+
+    public boolean validarTarjetaPorLuhn(String numeroTarjeta) {
+        // Remover espacios y caracteres no numéricos
+        String numeroLimpio = numeroTarjeta.replaceAll("[^0-9]", "");
+        
+        if (numeroLimpio.length() < 13 || numeroLimpio.length() > 19) {
+            return false;
+        }
+
+        int suma = 0;
+        boolean alternar = false;
+        
+        // Recorrer el número de derecha a izquierda
+        for (int i = numeroLimpio.length() - 1; i >= 0; i--) {
+            int digito = Character.getNumericValue(numeroLimpio.charAt(i));
+            
+            if (alternar) {
+                digito *= 2;
+                if (digito > 9) {
+                    digito = (digito % 10) + 1;
+                }
+            }
+            
+            suma += digito;
+            alternar = !alternar;
+        }
+        
+        return (suma % 10) == 0;
+    }
+
+    public boolean validarFechaExpiracion(String fechaExpiracion) {
+        try {
+            String[] partes = fechaExpiracion.split("/");
+            if (partes.length != 2) return false;
+            
+            int mes = Integer.parseInt(partes[0]);
+            int año = Integer.parseInt(partes[1]);
+            
+            // Validar mes
+            if (mes < 1 || mes > 12) return false;
+            
+            // Validar que no sea una fecha pasada
+            Calendar ahora = Calendar.getInstance();
+            int añoActual = ahora.get(Calendar.YEAR) % 100;
+            int mesActual = ahora.get(Calendar.MONTH) + 1;
+            
+            if (año < añoActual) return false;
+            if (año == añoActual && mes < mesActual) return false;
+            
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public String obtenerTipoTarjeta(String numeroTarjeta) {
+        String numeroLimpio = numeroTarjeta.replaceAll("[^0-9]", "");
+        
+        if (numeroLimpio.startsWith("4")) {
+            return "Visa";
+        } else if (numeroLimpio.startsWith("5")) {
+            return "Mastercard";
+        } else if (numeroLimpio.startsWith("34") || numeroLimpio.startsWith("37")) {
+            return "American Express";
+        } else if (numeroLimpio.startsWith("6")) {
+            return "Discover";
+        } else {
+            return "Desconocida";
         }
     }
 }

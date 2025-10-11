@@ -101,11 +101,6 @@ export class DetalleReserva implements OnInit {
   }
 
   cancelarReserva() {
-    if (this.reserva?.nombreEstado === 'Cancelada') {
-      alert('Esta reserva ya está cancelada.');
-      return;
-    }
-
     if (this.reserva?.nombreEstado === 'Pagada') {
       alert('No puedes cancelar una reserva que ya ha sido pagada.');
       return;
@@ -144,6 +139,11 @@ export class DetalleReserva implements OnInit {
       }));
 
       localStorage.setItem('ultimaReservaId', this.reservaId ?? '');
+
+      if (this.reserva.nombreEstado === 'Pagada') {
+        alert('❌ Esta reserva ya ha sido pagada. No puedes realizar otro pago.');
+        return;
+      }
       
       this.router.navigate(['/pago']);
     }
