@@ -1,34 +1,49 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core'; // <<< Se importa OnInit
 import { Router } from '@angular/router';
 import { CommonModule, NgClass } from '@angular/common';
-
-// Interfaz local para definir la estructura de los datos de prueba.
-interface ReservaDePrueba {
-  idReserva: string;
-  fecha: string; // LocalDate se representa como string 'YYYY-MM-DD'
-  hora: string;  // LocalTime se representa como string 'HH:MM'
-  numeroPersonas: number;
-  cedulaUsuario: string;
-  numeroMesa: number;
-  nombreEstado: 'Confirmada' | 'Pendiente' | 'Cancelada';
-}
+import { ReservaService } from '../../services/reserva-service'; // <<< Se importa el servicio
+import { ReservaResponseDTO } from '../../interfaces/reservaDTO'; // <<< Se importa la interfaz
 
 @Component({
   selector: 'app-lista-reservas',
   standalone: true,
-  imports: [CommonModule, NgClass], // NgClass es para aplicar estilos condicionales
+  imports: [CommonModule, NgClass],
   templateUrl: './lista-reservas.html',
 })
-export default class ListaReservas {
+export default class ListaReservas implements OnInit { // <<< Se implementa OnInit
 
-  // Datos quemados para la prueba de la interfaz
-  reservas: ReservaDePrueba[] = [
-    { idReserva: 'e1f2a3b4-c5d6-7890-1234-567890abcdef', fecha: '2025-11-15', hora: '20:00', numeroPersonas: 4, cedulaUsuario: '12345678', numeroMesa: 5, nombreEstado: 'Confirmada' },
-    { idReserva: 'f2a3b4c5-d6e7-8901-2345-67890abcdef1', fecha: '2025-11-16', hora: '19:30', numeroPersonas: 2, cedulaUsuario: '87654321', numeroMesa: 12, nombreEstado: 'Pendiente' },
-    { idReserva: 'a3b4c5d6-e7f8-9012-3456-7890abcdef12', fecha: '2025-11-18', hora: '21:00', numeroPersonas: 6, cedulaUsuario: '11223344', numeroMesa: 8, nombreEstado: 'Cancelada' },
-  ];
+  // El arreglo se inicializa vacío y se llenará con datos de la API
+  public reservas: ReservaResponseDTO[] = [];
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private reservaService: ReservaService // <<< Se inyecta el servicio de reservas
+  ) {}
+
+  /**
+   * Este método se ejecuta automáticamente cuando el componente se inicializa.
+   * Es el lugar perfecto para cargar los datos desde el servidor.
+   */
+  ngOnInit(): void {
+    this.cargarReservas();
+  }
+
+  /**
+   * Llama al servicio para obtener la lista de todas las reservas y las
+   * asigna a la variable local 'reservas'.
+   */
+  cargarReservas(): void {
+    this.reservaService.obtenerReservas().subscribe({
+      next: (data) => {
+        this.reservas = data;
+        console.log('Reservas cargadas exitosamente:', this.reservas);
+      },
+      error: (err) => {
+        console.error('Error al cargar las reservas:', err);
+        alert('No se pudieron cargar las reservas. Por favor, intente más tarde.');
+      }
+    });
+  }
 
   /**
    * Navega de vuelta al panel principal de administración.
@@ -39,8 +54,7 @@ export default class ListaReservas {
 
   /**
    * Devuelve clases de CSS para colorear el estado de la reserva.
-   * @param estado El estado actual de la reserva.
-   * @returns Un string con las clases de Tailwind CSS a aplicar.
+   * (Esta función se mantiene igual, está perfecta).
    */
   getEstadoClass(estado: string): string {
     switch (estado) {
@@ -55,4 +69,3 @@ export default class ListaReservas {
     }
   }
 }
-

@@ -85,4 +85,16 @@ export class AuthService {
     }
     return null;
   }
+
+  isAdmin(): boolean {
+    const user = this.getUser();
+    return !!user && user.nombreRol === 'Administrador';
+  }
+
+  isLoggedIn(): boolean {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem(this.tokenKey) !== null;
+    }
+    return false;
+  }
 }
