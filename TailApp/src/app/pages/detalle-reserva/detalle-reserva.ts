@@ -47,6 +47,8 @@ export class DetalleReserva implements OnInit {
     this.reservaService.getReservaPorId(this.reservaId).subscribe({
       next: (reserva: ReservaResponseDTO) => {
 
+        this.reserva = reserva;
+
         this.reservaForm.patchValue({
           fecha: reserva.fecha,
           hora: reserva.hora,
@@ -131,16 +133,21 @@ export class DetalleReserva implements OnInit {
 
   // Método para redirigir a la página de pago
   irAPago() {
-  if (this.reserva) {
-    const monto = this.reserva.numeroPersonas * 50000;
-    this.router.navigate(['/pago'], {
-      state: {
-        idReserva: this.reserva.idReserva,
+  
+    if (this.reserva) {
+      
+      const monto = this.reserva.numeroPersonas * 20000;
+      
+      localStorage.setItem('reservaSeleccionada', JSON.stringify({
+        id: this.reserva.idReserva,
         monto: monto
-      }
-    });
+      }));
+
+      localStorage.setItem('ultimaReservaId', this.reservaId ?? '');
+      
+      this.router.navigate(['/pago']);
+    }
   }
-}
 
   // Método para volver a la lista de reservas
   volver() {

@@ -7,7 +7,6 @@ import { PagoResponseDTO } from '../../interfaces/pagoDTO';
 
 @Component({
   selector: 'app-pasarela-pago',
-  standalone: true,
   imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './pasarela-pago.html',
 })
