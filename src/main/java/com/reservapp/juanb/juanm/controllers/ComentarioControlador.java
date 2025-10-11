@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.reservapp.juanb.juanm.dto.ComentarioRequestDTO;
 import com.reservapp.juanb.juanm.dto.ComentarioResponseDTO;
+import com.reservapp.juanb.juanm.dto.PromedioSemanalDTO;
 import com.reservapp.juanb.juanm.services.ComentarioServicio;
 
 @RestController
@@ -58,5 +59,11 @@ public class ComentarioControlador {
     public ResponseEntity<Void> delete(@PathVariable("uuid") UUID uuid) {
         comentarioServicio.delete(uuid);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/promedio-semanal")
+    public ResponseEntity<PromedioSemanalDTO> getPromedioSemanal() {
+        PromedioSemanalDTO promedio = comentarioServicio.getPromedioSemanal();
+        return ResponseEntity.ok(promedio);
     }
 }

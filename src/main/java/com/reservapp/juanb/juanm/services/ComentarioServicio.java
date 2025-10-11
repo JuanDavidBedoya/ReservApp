@@ -1,6 +1,8 @@
 package com.reservapp.juanb.juanm.services;
 
 import java.sql.Date;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.reservapp.juanb.juanm.dto.ComentarioRequestDTO;
 import com.reservapp.juanb.juanm.dto.ComentarioResponseDTO;
+import com.reservapp.juanb.juanm.dto.PromedioSemanalDTO;
 import com.reservapp.juanb.juanm.entities.Comentario;
 import com.reservapp.juanb.juanm.entities.Usuario;
 import com.reservapp.juanb.juanm.exceptions.BadRequestException;
@@ -94,4 +97,31 @@ public class ComentarioServicio {
             throw new BadRequestException("Error al eliminar el comentario: " + e.getMessage());
         }
     }
+
+    //Calcular Promedio Semanal
+    public PromedioSemanalDTO getPromedioSemanal() {
+    // Calcular fechas de la semana (Lunes a Domingo)
+    LocalDate hoy = LocalDate.now();
+    LocalDate inicioSemana = hoy.with(DayOfWeek.MONDAY);
+    LocalDate finSemana = hoy.with(DayOfWeek.SUNDAY);
+    
+    Date fechaInicio = Date.valueOf(inicioSemana);
+    Date fechaFin = Date.valueOf(finSemana);
+    
+    Double promedio = comentarioRepositorio.findPromedioSemanal(fechaInicio, fechaFin);
+    Integer total = comentarioRepositorio.countComentariosSemana(fechaInicio, fechaFin);
+    
+    // Si no hay calificaciones en la semana, retornar 0
+    if (promedio == null) {
+        promedio = 0.0;
+        total = 0;
+    }
+    
+    return new PromedioSemanalDTO(
+        Math.round(promedio * 100.0) / 100.0, // Redondear a 2 decimales
+        total,
+        inicioSemana,
+        finSemana
+    );
+}
 }

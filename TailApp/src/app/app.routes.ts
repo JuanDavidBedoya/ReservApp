@@ -14,6 +14,8 @@ import { AuthGuard } from './guards/auth-guard';
 import { AuthenticatedGuard } from './guards/authenticated-guard';
 import HomeAdmin from './pages/home-admin/home-admin';
 import { adminGuard } from './guards/admin-guard';
+import ListaComentarios from './pages/lista-comentarios/lista-comentarios';
+import ListaReservas from './pages/lista-reservas/lista-reservas';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'inicio', pathMatch: 'full' },
@@ -29,5 +31,7 @@ export const routes: Routes = [
   { path: 'detalle-reserva/:id', component: DetalleReserva, canActivate: [AuthGuard] },
   { path: 'registro', component: Registro, canActivate: [AuthenticatedGuard] },
   { path: 'home-admin', component: HomeAdmin, canActivate: [adminGuard] },
+  { path: 'lista-comentarios', component: ListaComentarios, canActivate: [adminGuard] },
+  { path: 'lista-reservas', component: ListaReservas, canActivate: [adminGuard] },
   { path: '**', redirectTo: 'inicio' }
 ];

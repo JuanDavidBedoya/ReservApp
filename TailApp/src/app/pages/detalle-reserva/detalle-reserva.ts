@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ReservaService } from '../../services/reserva-service'; 
-import { ReservaDTO } from '../../interfaces/reservaDTO'; 
+import { ReservaResponseDTO } from '../../interfaces/reservaDTO';
 
 @Component({
   selector: 'app-detalle-reserva',
@@ -29,7 +29,7 @@ export class DetalleReserva implements OnInit {
 
   cargarReserva() {
     this.reservaService.getReservaPorId(this.reservaId).subscribe({
-      next: (reserva: ReservaDTO) => {
+      next: (reserva: ReservaResponseDTO) => {
         this.reservaForm = this.fb.group({
           fecha: [reserva.fecha, Validators.required],
           hora: [reserva.hora, Validators.required],
@@ -51,7 +51,7 @@ export class DetalleReserva implements OnInit {
       return;
     }
 
-    const datosActualizados: Partial<ReservaDTO> = {
+    const datosActualizados: Partial<ReservaResponseDTO> = {
       fecha: this.reservaForm.value.fecha,
       hora: this.reservaForm.value.hora,
       numeroPersonas: this.reservaForm.value.personas,

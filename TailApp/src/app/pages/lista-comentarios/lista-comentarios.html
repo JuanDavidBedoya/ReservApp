@@ -1,0 +1,142 @@
+<!-- Fondo degradado -->
+<div class="fixed inset-0 bg-black bg-gradient-to-b from-black via-gray-900 to-gray-800 z-0"></div>
+
+<!-- SVG decorativo -->
+<svg class="fixed bottom-0 left-0 w-full h-auto z-[1] opacity-70 pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+  <path fill="#ffffff" fill-opacity="1"
+    d="M0,0L40,42.7C80,85,160,171,240,197.3C320,224,400,192,480,154.7C560,117,640,75,720,74.7C800,75,880,117,960,154.7C1040,192,1120,224,1200,213.3C1280,203,1360,149,1400,122.7L1440,96L1440,320L0,320Z">
+  </path>
+</svg>
+
+<!-- Contenedor principal -->
+<section class="relative flex flex-col items-center justify-start min-h-screen w-full pt-[6rem] pb-10 px-2 sm:px-4 z-[2]">
+
+  <!-- Contenido -->
+  <div class="w-full max-w-4xl rounded-2xl bg-neutral-900 p-4 shadow-lg border border-neutral-800 flex flex-col">
+
+    <!-- ENCABEZADO -->
+    <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+      <h2 class="text-2xl font-bold text-white">Listado de Comentarios</h2>
+      <button (click)="volver()"
+        class="bg-neutral-700 hover:bg-neutral-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+        &larr; Volver
+      </button>
+    </div>
+
+    <!-- PROMEDIO SEMANAL -->
+    <div class="mb-4 p-3 bg-gradient-to-r from-blue-900/50 to-purple-900/50 rounded-lg border border-blue-700/30">
+      <h3 class="text-base font-semibold text-white mb-2">📊 Reporte Semanal</h3>
+
+      @if (cargandoPromedio) {
+        <div class="text-center text-neutral-400 py-2">
+          <div class="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+          <span class="ml-2 text-sm">Cargando promedio...</span>
+        </div>
+      } @else if (promedioSemanal) {
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-center">
+          <div class="bg-neutral-800/50 p-2 rounded border border-neutral-700/50">
+            <div class="text-lg font-bold text-yellow-400">
+              {{ promedioSemanal.promedio.toFixed(1) }}/5.0
+            </div>
+            <div class="text-xs text-neutral-400 mt-1">Promedio</div>
+          </div>
+
+          <div class="bg-neutral-800/50 p-2 rounded border border-neutral-700/50">
+            <div class="text-base text-yellow-400 mb-1">
+              {{ mostrarEstrellasPromedio(promedioSemanal.promedio) }}
+            </div>
+            <div class="text-xs text-neutral-400">Calificación</div>
+          </div>
+
+          <div class="bg-neutral-800/50 p-2 rounded border border-neutral-700/50">
+            <div class="text-lg font-bold text-white">
+              {{ promedioSemanal.totalCalificaciones }}
+            </div>
+            <div class="text-xs text-neutral-400 mt-1">Total</div>
+          </div>
+
+          <div class="bg-neutral-800/50 p-2 rounded border border-neutral-700/50">
+            <div class="text-xs text-white font-medium">
+              {{ promedioSemanal.fechaInicio | date:'dd/MM' }} - {{ promedioSemanal.fechaFin | date:'dd/MM' }}
+            </div>
+            <div class="text-xs text-neutral-400 mt-1">Semana</div>
+          </div>
+        </div>
+
+        <div class="text-center text-neutral-400 text-xs mt-2">
+          Reporte semanal (lunes a domingo)
+        </div>
+      } @else {
+        <div class="text-center text-neutral-500 py-2 text-sm">
+          No hay datos esta semana
+        </div>
+      }
+    </div>
+
+    <!-- TABLA DE COMENTARIOS -->
+    <div class="overflow-auto max-h-[55vh] rounded-lg border border-neutral-800">
+      <table class="w-full text-left text-sm">
+        <thead>
+          <tr class="border-b border-neutral-700 sticky top-0 bg-neutral-900">
+            <th class="p-3 text-neutral-400 font-semibold">Cliente</th>
+            <th class="p-3 text-neutral-400 font-semibold text-center">Puntuación</th>
+            <th class="p-3 text-neutral-400 font-semibold">Mensaje</th>
+            <th class="p-3 text-neutral-400 font-semibold">Fecha</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (comentario of comentarios; track comentario.idComentario) {
+          <tr class="border-b border-neutral-800 hover:bg-neutral-800/60 transition-colors duration-200">
+            <td class="p-3 text-white font-medium align-top">
+              <div class="flex items-center">
+                <div
+                  class="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold mr-2">
+                  {{ comentario.nombreUsuario?.charAt(0) || 'U' }}
+                </div>
+                <span class="truncate max-w-[120px]">{{ comentario.nombreUsuario || 'Usuario' }}</span>
+              </div>
+            </td>
+            <td class="p-3 text-yellow-400 text-base text-center align-top"
+              title="{{ comentario.puntuacion }} de 5 estrellas">
+              <div class="flex justify-center items-center">
+                {{ mostrarEstrellas(comentario.puntuacion) }}
+              </div>
+              <div class="text-xs text-neutral-500 mt-1">
+                ({{ comentario.puntuacion }}/5)
+              </div>
+            </td>
+            <td class="p-3 text-neutral-300 align-top">
+              <div class="max-w-[200px] break-words line-clamp-2 text-xs">
+                {{ comentario.mensaje }}
+              </div>
+            </td>
+            <td class="p-3 text-neutral-400 align-top text-xs">
+              {{ comentario.fechaComentario | date:'dd/MM/yyyy' }}
+            </td>
+          </tr>
+          } @empty {
+          <tr>
+            <td colspan="4" class="text-center p-6 text-neutral-500">
+              <div class="flex flex-col items-center justify-center py-6">
+                <svg class="w-10 h-10 text-neutral-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                </svg>
+                <p class="text-base font-medium text-neutral-400">No hay comentarios para mostrar</p>
+                <p class="text-xs text-neutral-500 mt-1">Los comentarios aparecerán aquí cuando los usuarios los envíen</p>
+              </div>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PIE DE PÁGINA -->
+    <div class="mt-4 flex justify-between items-center text-sm text-neutral-500">
+      <div>Mostrando <span class="text-white font-medium">{{ comentarios.length }}</span> comentarios</div>
+      <div class="text-xs">Última actualización: {{ today | date:'dd/MM/yyyy HH:mm' }}</div>
+    </div>
+
+  </div>
+</section>

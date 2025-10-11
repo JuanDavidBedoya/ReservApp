@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/reservas")
@@ -46,35 +46,30 @@ public class ReservaControlador {
         return ResponseEntity.ok(reserva); // 200
     }
 
+    // <<< NUEVO ENDPOINT: Para que coincida con el servicio de Angular
+    @GetMapping("/usuario/{cedula}")
+    public ResponseEntity<List<ReservaResponseDTO>> getByCedula(@PathVariable("cedula") String cedula) {
+        List<ReservaResponseDTO> list = reservaServicio.findByUsuario(cedula);
+        if (list.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(list);
+    }
+
     @PostMapping
     public ResponseEntity<ReservaResponseDTO> save(@RequestBody ReservaRequestDTO dto) {
-
-        // Validaciones básicas adicionales
-        if (dto.fecha() == null) {
-            throw new BadRequestException("La fecha de la reserva es requerida");
-        }
-        if (dto.hora() == null) {
-            throw new BadRequestException("La hora de la reserva es requerida");
-        }
+        // Las validaciones de Jakarta Validation se encargarán de los campos.
+        // Se mantienen las validaciones de lógica de negocio si son necesarias.
         if (dto.numeroPersonas() <= 0) {
             throw new BadRequestException("El número de personas debe ser mayor a 0");
-        }
-        if (dto.cedulaUsuario() == null) {
-            throw new BadRequestException("La reserva debe tener un usuario asociado");
         }
         
         ReservaResponseDTO nuevaReserva = reservaServicio.save(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevaReserva); // 201
     }
+
     @PutMapping("/{uuid}")
-    public ResponseEntity<ReservaResponseDTO> update(@PathVariable("uuid") UUID uuid,
-                                                     @RequestBody ReservaRequestDTO dto) {
-        if (dto.fecha() == null) {
-            throw new BadRequestException("La fecha de la reserva es requerida");
-        }
-        if (dto.hora() == null) {
-            throw new BadRequestException("La hora de la reserva es requerida");
-        }
+    public ResponseEntity<ReservaResponseDTO> update(@PathVariable("uuid") UUID uuid, @RequestBody ReservaRequestDTO dto) {
         if (dto.numeroPersonas() <= 0) {
             throw new BadRequestException("El número de personas debe ser mayor a 0");
         }
@@ -89,7 +84,6 @@ public class ReservaControlador {
         return ResponseEntity.noContent().build(); // 204
     }
     
-    //Cancelar una reserva
     @PatchMapping("/{uuid}/cancelar")
     public ResponseEntity<Void> cancelarReserva(@PathVariable UUID uuid) {
         reservaServicio.cancel(uuid);

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ReservaService } from '../../services/reserva-service';
-import { ReservaDTO } from '../../interfaces/reservaDTO';
+import { ReservaResponseDTO } from '../../interfaces/reservaDTO';
 
 @Component({
   selector: 'app-usuario-reserva',
@@ -10,7 +10,7 @@ import { ReservaDTO } from '../../interfaces/reservaDTO';
   templateUrl: './usuario-reserva.html',
 })
 export class UsuarioReservas implements OnInit {
-  reservas: ReservaDTO[] = [];
+  reservas: ReservaResponseDTO[] = [];
   loading = true;
   error = false;
 

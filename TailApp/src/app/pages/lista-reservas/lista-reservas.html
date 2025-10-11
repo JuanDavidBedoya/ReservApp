@@ -1,0 +1,66 @@
+<!-- Fondo con degradado oscuro -->
+<div class="absolute top-0 left-0 h-full w-full overflow-hidden bg-black bg-gradient-to-b from-black via-gray-900 to-gray-800"></div>
+
+<!-- Contenedor principal centrado -->
+<div class="relative flex min-h-screen items-center justify-center p-4">
+
+  <!-- Tarjeta que contiene la tabla de reservas -->
+  <div class="z-10 w-full max-w-6xl rounded-2xl bg-neutral-900 p-8 shadow-lg border border-neutral-800">
+    
+    <!-- Encabezado de la tarjeta -->
+    <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+      <h2 class="text-2xl font-bold text-white">Listado de Reservas</h2>
+      <button (click)="volver()" class="bg-neutral-700 hover:bg-neutral-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+        &larr; Volver
+      </button>
+    </div>
+
+    <!-- Contenedor de la tabla para permitir scroll horizontal -->
+    <div class="overflow-x-auto">
+      <table class="w-full text-left">
+        <thead>
+          <tr class="border-b border-neutral-700">
+            <th class="p-4 text-neutral-400">Fecha / Hora</th>
+            <th class="p-4 text-neutral-400">Cliente (Cédula)</th>
+            <th class="p-4 text-neutral-400 text-center">Personas</th>
+            <th class="p-4 text-neutral-400 text-center">Mesa</th>
+            <th class="p-4 text-neutral-400 text-center">Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (reserva of reservas; track reserva.idReserva) {
+            <tr class="border-b border-neutral-800 hover:bg-neutral-800/60 transition-colors">
+              <td class="p-4 text-white font-medium align-top">
+                <div>{{ reserva.fecha }}</div>
+                <div class="text-sm text-neutral-400">{{ reserva.hora }}</div>
+              </td>
+              <td class="p-4 text-neutral-300 align-top">{{ reserva.cedulaUsuario }}</td>
+              <td class="p-4 text-white text-center align-top">{{ reserva.numeroPersonas }}</td>
+              <td class="p-4 text-white text-center align-top">{{ reserva.numeroMesa }}</td>
+              <td class="p-4 text-center align-top">
+                <span [ngClass]="getEstadoClass(reserva.nombreEstado)" class="px-2 py-1 rounded-full text-xs font-bold">
+                  {{ reserva.nombreEstado }}
+                </span>
+              </td>
+              <td class="p-4 text-center align-top">
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="text-center p-8 text-neutral-500">
+                No hay reservas para mostrar.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<!-- Onda SVG decorativa en la parte inferior -->
+<svg class="absolute bottom-0 left-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+  <path fill="#fff" fill-opacity="1" d="M0,0L40,42.7C80,85,160,171,240,197.3C320,224,400,192,480,154.7C560,117,640,75,720,74.7C800,75,880,117,960,154.7C1040,192,1120,224,1200,213.3C1280,203,1360,149,1400,122.7L1440,96L1440,320L1400,320C1360,320,1280,320,1200,320C1120,320,1040,320,960,320C880,320,800,320,720,320C640,320,560,320,480,320C400,320,320,320,240,320C160,320,80,320,40,320L0,320Z"></path>
+</svg>
+

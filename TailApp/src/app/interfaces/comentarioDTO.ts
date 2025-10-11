@@ -11,3 +11,10 @@ export interface ComentarioResponseDTO {
   fechaComentario: string; // Las fechas suelen manejarse como string en formato ISO
   nombreUsuario: string;
 }
+
+export interface PromedioSemanalDTO {
+  promedio: number;
+  totalCalificaciones: number;
+  fechaInicio: string;
+  fechaFin: string;
+}
