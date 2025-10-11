@@ -11,4 +11,5 @@ export interface UsuarioUpdateDTO {
   nombre: string;
   correo: string;
   telefono: string;
+  contrasena?: string;
 }

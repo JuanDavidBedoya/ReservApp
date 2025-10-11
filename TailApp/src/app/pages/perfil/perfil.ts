@@ -62,11 +62,22 @@ export class Perfil implements OnInit {
       return;
     }
 
+    // Verificar que los campos obligatorios no estén vacíos
+    if (!this.formData.nombre?.trim() || !this.formData.correo?.trim() || !this.formData.telefono?.trim()) {
+      alert('Por favor complete todos los campos obligatorios');
+      return;
+    }
+
     const updateData: UsuarioUpdateDTO = {
       nombre: this.formData.nombre,
       correo: this.formData.correo,
       telefono: this.formData.telefono,
     };
+
+    const nuevaPassword = this.formData.password?.trim();
+    if (nuevaPassword && nuevaPassword !== '') {
+      updateData.contrasena = nuevaPassword;
+    }
 
     this.http.put<UsuarioResponseDTO>(`${this.apiURL}/${this.user.cedula}`, updateData).subscribe({
       next: (data) => {

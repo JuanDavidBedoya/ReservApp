@@ -12,5 +12,8 @@ public record UsuarioUpdateDTO(
     @Email(message = "El formato del correo no es válido")
     String correo,
     
-    String telefono
+    @NotBlank(message = "El telefono no puede estar vacío")
+    String telefono,
+
+    String contrasena
 ) {}
