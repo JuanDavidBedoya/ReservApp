@@ -41,7 +41,21 @@ export class UsuarioReservas implements OnInit {
   }
 
   verReserva(id: string) {
-    this.router.navigate(['/detalle-reserva', id]);
-  }
+  // Primero obtener los datos de la reserva para verificar el estado
+  this.reservaService.getReservaPorId(id).subscribe({
+    next: (reserva: ReservaResponseDTO) => {
+      if (reserva.nombreEstado === 'Cancelada') {
+        alert('No puedes ver los detalles de una reserva cancelada.');
+        return;
+      }
+      // Si no está cancelada, navegar a la página de detalle
+      this.router.navigate(['/detalle-reserva', id]);
+    },
+    error: (err) => {
+      console.error('Error al verificar el estado de la reserva:', err);
+      alert('No se pudo verificar el estado de la reserva.');
+    }
+  });
+}
 }
 
