@@ -1,0 +1,47 @@
+<!-- Fondo con degradado oscuro y SVG decorativo -->
+<div class="absolute top-0 left-0 h-full w-full overflow-hidden bg-black bg-gradient-to-b from-black via-gray-900 to-gray-800"></div>
+
+<section class="relative flex min-h-[calc(100vh-6rem)] flex-col items-center justify-center text-center px-6">
+  
+  <!-- Saludo al Administrador en la esquina superior derecha -->
+  @if (nombreUsuario) {
+    <div class="z-10 absolute top-20 right-10 bg-white backdrop-blur-sm text-black font-semibold py-2 px-4 rounded-xl shadow-lg">
+      Admin: {{ nombreUsuario }}
+    </div>
+  }
+
+  <!-- Título principal -->
+  <h1 class="z-10 text-4xl md:text-5xl font-bold text-white mb-4">
+    Panel de <span class="text-gray-400">Administración</span>
+  </h1>
+
+  <!-- Descripción -->
+  <p class="z-10 text-gray-300 text-lg max-w-xl mx-auto mb-10">
+    Gestiona las reservas y los comentarios de los clientes desde esta interfaz.
+  </p>
+
+  <!-- Contenedor de botones de administración -->
+  <div class="z-10 grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-2xl">
+    
+    <button
+      (click)="irA('/reservas-admin')"
+      class="rounded-2xl bg-white text-black font-semibold py-4 px-6 hover:bg-gray-200 transition shadow-xl border-2 border-gray-800"
+    >
+      📋 Ver Reservas
+    </button>
+
+    <button
+      (click)="irA('/lista-comentarios')"
+      class="rounded-2xl bg-white text-black font-semibold py-4 px-6 hover:bg-gray-200 transition shadow-xl border-2 border-gray-800"
+    >
+      📊 Ver Comentarios
+    </button>
+  </div>
+
+</section>
+
+<!-- SVG inferior decorativo -->
+<svg class="absolute bottom-0 left-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+  <path fill="#fff" fill-opacity="1" d="M0,0L40,42.7C80,85,160,171,240,197.3C320,224,400,192,480,154.7C560,117,640,75,720,74.7C800,75,880,117,960,154.7C1040,192,1120,224,1200,213.3C1280,203,1360,149,1400,122.7L1440,96L1440,320L0,320Z"></path>
+</svg>
+

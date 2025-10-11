@@ -14,34 +14,41 @@
   </p>
 
   <!-- Contenedor de botones -->
-  <div class="z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-4xl">
+  <div class="z-10 flex flex-wrap justify-center gap-6 w-full max-w-6xl">
     
     <button
       (click)="irA('/reserva')"
-      class="rounded-2xl bg-white text-black font-semibold py-4 px-6 hover:bg-gray-200 transition shadow-xl border-2 border-gray-800"
+      class="flex items-center justify-center gap-2 w-48 h-16 rounded-2xl bg-white text-black font-semibold hover:bg-gray-200 transition shadow-xl border-2 border-gray-800"
     >
-      📅 Reservar
+      📅 <span>Reservar</span>
     </button>
 
     <button
       (click)="irA('/comentarios')"
-      class="rounded-2xl bg-white text-black font-semibold py-4 px-6 hover:bg-gray-200 transition shadow-xl border-2 border-gray-800"
+      class="flex items-center justify-center gap-2 w-48 h-16 rounded-2xl bg-white text-black font-semibold hover:bg-gray-200 transition shadow-xl border-2 border-gray-800"
     >
-      💬 Comentarios
+      💬 <span>Comentarios</span>
     </button>
 
     <button
       (click)="irA('/perfil')"
-      class="rounded-2xl bg-white text-black font-semibold py-4 px-6 hover:bg-gray-200 transition shadow-xl border-2 border-gray-800"
+      class="flex items-center justify-center gap-2 w-48 h-16 rounded-2xl bg-white text-black font-semibold hover:bg-gray-200 transition shadow-xl border-2 border-gray-800"
     >
-      👤 Perfil
+      👤 <span>Perfil</span>
     </button>
 
     <button
       (click)="irA('/pago')"
-      class="rounded-2xl bg-white text-black font-semibold py-4 px-6 hover:bg-gray-200 transition shadow-xl border-2 border-gray-800"
+      class="flex items-center justify-center gap-2 w-48 h-16 rounded-2xl bg-white text-black font-semibold hover:bg-gray-200 transition shadow-xl border-2 border-gray-800"
     >
-      💳 Pago
+      💳 <span>Pago</span>
+    </button>
+
+    <button
+      (click)="irA('/usuario-reserva')"
+      class="flex items-center justify-center gap-2 w-48 h-16 rounded-2xl bg-white text-black font-semibold hover:bg-gray-200 transition shadow-xl border-2 border-gray-800"
+    >
+      📖 <span>Mis reservas</span>
     </button>
   </div>
 

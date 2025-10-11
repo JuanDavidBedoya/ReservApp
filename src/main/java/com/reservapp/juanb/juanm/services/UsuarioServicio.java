@@ -80,12 +80,6 @@ public class UsuarioServicio implements UserDetailsService{
         usuarioExistente.setCorreo(usuarioDTO.correo());
         usuarioExistente.setTelefono(usuarioDTO.telefono());
 
-        if (!usuarioExistente.getRol().getIdRol().equals(usuarioDTO.idRol())) {
-            Rol nuevoRol = rolRepositorio.findById(usuarioDTO.idRol())
-                .orElseThrow(() -> new ResourceNotFoundException("Rol no encontrado con ID: " + usuarioDTO.idRol()));
-            usuarioExistente.setRol(nuevoRol);
-        }
-
         Usuario usuarioActualizado = usuarioRepositorio.save(usuarioExistente);
         return usuarioMapper.toResponseDTO(usuarioActualizado);
     }   

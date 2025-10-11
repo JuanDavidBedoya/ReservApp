@@ -45,8 +45,8 @@ export default class LoginComponent {
         console.log('Rol detectado:', role);
 
         // Redirigimos al usuario según su rol.
-        if (role === 'ADMINISTRADOR') {
-          this.router.navigate(['/comentarios']);
+        if (role === 'Administrador') {
+          this.router.navigate(['/home-admin']);
         } else {
           this.router.navigate(['/home-private']);
         }
