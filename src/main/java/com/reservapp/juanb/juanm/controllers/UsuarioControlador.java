@@ -1,9 +1,14 @@
 package com.reservapp.juanb.juanm.controllers;
 
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import com.reservapp.juanb.juanm.dto.ForgotPasswordRequestDTO;
+import com.reservapp.juanb.juanm.dto.ResetPasswordRequestDTO;
 import com.reservapp.juanb.juanm.dto.UsuarioCreateDTO;
 import com.reservapp.juanb.juanm.dto.UsuarioResponseDTO;
 import com.reservapp.juanb.juanm.dto.UsuarioUpdateDTO;
@@ -58,5 +63,17 @@ public class UsuarioControlador {
     public ResponseEntity<Void> delete(@PathVariable("cedula") String cedula) {
         usuarioServicio.delete(cedula);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<Map<String, String>> forgotPassword(@RequestBody ForgotPasswordRequestDTO request) {
+        usuarioServicio.forgotPassword(request.correo());
+        return ResponseEntity.ok(Map.of("message", "Si el correo está registrado, se ha enviado un enlace de restablecimiento."));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<Map<String, String>> resetPassword(@RequestBody ResetPasswordRequestDTO request) {
+        usuarioServicio.resetPassword(request.token(), request.nuevaContrasena());
+        return ResponseEntity.ok(Map.of("message", "Contraseña restablecida con éxito."));
     }
 }

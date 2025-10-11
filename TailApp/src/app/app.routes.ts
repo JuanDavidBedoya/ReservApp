@@ -16,6 +16,8 @@ import HomeAdmin from './pages/home-admin/home-admin';
 import { adminGuard } from './guards/admin-guard';
 import ListaComentarios from './pages/lista-comentarios/lista-comentarios';
 import ListaReservas from './pages/lista-reservas/lista-reservas';
+import { ForgotPassword } from './pages/forgot-password/forgot-password';
+import { ResetPassword } from './pages/reset-password/reset-password';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'inicio', pathMatch: 'full' },
@@ -33,5 +35,7 @@ export const routes: Routes = [
   { path: 'home-admin', component: HomeAdmin, canActivate: [adminGuard] },
   { path: 'lista-comentarios', component: ListaComentarios, canActivate: [adminGuard] },
   { path: 'lista-reservas', component: ListaReservas, canActivate: [adminGuard] },
+  { path: 'forgot-password', component: ForgotPassword, canActivate: [AuthenticatedGuard] },
+  { path: 'reset-password', component: ResetPassword, canActivate: [AuthenticatedGuard] },
   { path: '**', redirectTo: 'inicio' }
 ];

@@ -51,4 +51,25 @@ public class EmailServicio {
             System.err.println("Error al enviar correo con adjunto: " + e.getMessage());
         }
     }
+
+    @Async
+    public void enviarCorreoRestablecimiento(String to, String token) {
+        try {
+            // La URL debe apuntar a la página de tu frontend en Angular
+            String resetUrl = "http://localhost:4200/reset-password?token=" + token;
+            
+            String subject = "Restablecimiento de Contraseña - ReservApp";
+            String text = "Hola,\n\n"
+                        + "Has solicitado restablecer tu contraseña.\n\n"
+                        + "Haz clic en el siguiente enlace para crear una nueva:\n" + resetUrl + "\n\n"
+                        + "Si no solicitaste este cambio, puedes ignorar este correo de forma segura.\n\n"
+                        + "Gracias,\nEl equipo de ReservApp";
+
+            // Usamos tu método existente para mantener la consistencia
+            enviarNotificacionSimple(to, subject, text);
+
+        } catch (Exception e) {
+            System.err.println("Error al enviar el correo de restablecimiento: " + e.getMessage());
+        }
+    }
 }

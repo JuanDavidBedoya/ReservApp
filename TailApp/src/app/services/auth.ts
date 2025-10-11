@@ -5,6 +5,7 @@ import { Observable, tap } from 'rxjs';
 import { LoginRequestDTO } from '../interfaces/loginResquestDTO';
 import { AuthResponseDTO } from '../interfaces/authResponse';
 import { UsuarioResponseDTO } from '../interfaces/usuarioDTO';
+import { ForgotPasswordRequest, ResetPasswordRequest } from '../interfaces/passwordDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,7 @@ import { UsuarioResponseDTO } from '../interfaces/usuarioDTO';
 export class AuthService {
 
   private LOGIN_URL = 'http://localhost:8080/auth/login';
+  private API_URL = 'http://localhost:8080';
   private tokenKey = 'authToken'; // Clave para guardar el token
   private userKey = 'usuario';   // Clave para guardar los datos del usuario
 
@@ -96,5 +98,21 @@ export class AuthService {
       return localStorage.getItem(this.tokenKey) !== null;
     }
     return false;
+  }
+
+  /**
+   * Solicita el restablecimiento de contraseña.
+   */
+  forgotPassword(correo: string): Observable<any> {
+    const request: ForgotPasswordRequest = { correo };
+    return this.httpClient.post<any>(`${this.API_URL}/usuarios/forgot-password`, request);
+  }
+
+  /**
+   * Envía el token y la nueva contraseña para completar el restablecimiento.
+   */
+  resetPassword(token: string, nuevaContrasena: string): Observable<any> {
+    const request: ResetPasswordRequest = { token, nuevaContrasena };
+    return this.httpClient.post<any>(`${this.API_URL}/usuarios/reset-password`, request);
   }
 }

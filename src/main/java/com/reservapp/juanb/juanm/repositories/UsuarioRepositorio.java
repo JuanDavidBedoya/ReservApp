@@ -25,4 +25,8 @@ public interface UsuarioRepositorio extends JpaRepository<Usuario, String>{
 
     Optional<Usuario> findByCedula(String cedula);
 
+    Optional<Usuario> findByCorreo(String correo);
+
+    Optional<Usuario> findByResetPasswordToken(String token);
+
 }
