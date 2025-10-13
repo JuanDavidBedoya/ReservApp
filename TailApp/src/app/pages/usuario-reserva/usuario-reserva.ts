@@ -44,8 +44,8 @@ export class UsuarioReservas implements OnInit {
   // Primero obtener los datos de la reserva para verificar el estado
   this.reservaService.getReservaPorId(id).subscribe({
     next: (reserva: ReservaResponseDTO) => {
-      if (reserva.nombreEstado === 'Cancelada') {
-        alert('No puedes ver los detalles de una reserva cancelada.');
+      if (reserva.nombreEstado === 'Cancelada' || reserva.nombreEstado === 'Pagada') {
+        alert('No puedes ver los detalles de una reserva cancelada o pagada.');
         return;
       }
       // Si no está cancelada, navegar a la página de detalle

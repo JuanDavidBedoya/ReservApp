@@ -148,7 +148,6 @@ export class Pago implements OnInit {
 
     this.cargando = true;
 
-    // Siempre pago con tarjeta
     const pagoData: PagoRequestDTO = {
       idReserva: idReserva,
       monto: monto,
