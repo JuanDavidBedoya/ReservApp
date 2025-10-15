@@ -104,7 +104,7 @@ public class ReservaServicio {
             Reserva guardada = reservaRepositorio.save(reserva);
 
             // Notificación
-            enviarNotificacionReserva(guardada, "confirmada");
+            enviarNotificacionReserva(guardada, "Confirmada");
 
             return reservaMapper.toResponseDTO(guardada);
 
@@ -157,7 +157,7 @@ public class ReservaServicio {
         Reserva actualizada = reservaRepositorio.save(reservaExistente);
 
         // Notificación
-        enviarNotificacionReserva(actualizada, "actualizada");
+        enviarNotificacionReserva(actualizada, "Actualizada");
 
         return reservaMapper.toResponseDTO(actualizada);
     }
