@@ -12,9 +12,15 @@ import { AuthResponseDTO } from '../../interfaces/authResponse';
   imports: [FormsModule, CommonModule, RouterLink],
   templateUrl: './login.html',
 })
-export default class LoginComponent {
-  cedula: string = '';
-  contrasena: string = '';
+export default class Login {
+  // Objeto para enlazar con los campos del formulario
+  formData = {
+    cedula: '',
+    contrasena: ''
+  };
+
+  // Propiedad para almacenar y mostrar errores del servidor
+  errorMessage: string | null = null;
 
   constructor(
     private authService: AuthService,
@@ -22,14 +28,13 @@ export default class LoginComponent {
   ) {}
 
   login(): void {
-    if (!this.cedula || !this.contrasena) {
-      alert('Por favor, ingrese cédula y contraseña.');
-      return;
-    }
+    // La validación de campos vacíos ahora la maneja el formulario en el HTML.
+    // Limpiamos cualquier mensaje de error anterior antes de un nuevo intento.
+    this.errorMessage = null;
 
     const request: LoginRequestDTO = {
-      cedula: this.cedula,
-      contrasena: this.contrasena
+      cedula: this.formData.cedula,
+      contrasena: this.formData.contrasena
     };
 
     console.log('📤 Enviando solicitud de login:', request);
@@ -37,10 +42,6 @@ export default class LoginComponent {
     this.authService.login(request).subscribe({
       next: (response: AuthResponseDTO) => {
         console.log('✅ Login exitoso. Respuesta recibida:', response);
-
-        // La lógica de guardar el token y el usuario ya se maneja en el servicio gracias al operador `tap`.
-        // Ahora solo nos preocupamos de la redirección.
-
         const role = response.usuario.nombreRol;
         console.log('Rol detectado:', role);
 
@@ -53,14 +54,14 @@ export default class LoginComponent {
       },
       error: (err) => {
         console.error('❌ Error en el login:', err);
-        // Manejo de errores mejorado para dar feedback más específico.
-        const errorMessage = err.error?.message || 'Credenciales inválidas.';
+        // Establecemos el mensaje de error para mostrarlo en la UI.
         if (err.status === 400 || err.status === 401) {
-          alert(errorMessage);
+          this.errorMessage = 'La cédula o la contraseña son incorrectas.';
+          
         } else if (err.status === 0) {
-          alert('No se pudo conectar con el servidor. Verifique su conexión o el estado del backend.');
+          this.errorMessage = 'La cédula o la contraseña son incorrectas.';
         } else {
-          alert('Ocurrió un error inesperado. Por favor, intente más tarde.');
+          this.errorMessage = 'La cédula o la contraseña son incorrectas.';
         }
       }
     });
